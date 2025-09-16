@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Laravel + React Starter Kit
 
 ## Introduction
@@ -23,3 +24,6 @@ In order to ensure that the Laravel community is welcoming to all, please review
 ## License
 
 The Laravel + React starter kit is open-sourced software licensed under the MIT license.
+=======
+# bunnymodel
+>>>>>>> 25f794a5ffece9eb631b3ff51867195a11daa516
