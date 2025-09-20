@@ -5,31 +5,28 @@ namespace App\Http\Controllers\Api\BunnyModels;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\BunnyModels\BunnuModel;
-use App\Models\BunnyModels\BunnyModelPrice;
-use App\Models\BunnyModels\BunnyModelImage;
 
 class BunnyModelController extends Controller
 {   
     // Get all models with images and prices
     public function index(Request $request)
     {
-        // Get limit and page from request, default to 10 and 1
-        $limit = $request->input('limit', 20);   // How many models per page
-        $page = $request->input('page', 1);      // Page number
+        $limit = $request->input('limit', 20);
+        $page = $request->input('page', 1);
 
-        // Use skip() and take() for offset pagination
         $models = BunnuModel::with(['prices', 'images'])
             ->skip(($page - 1) * $limit)
             ->take($limit)
-            ->get();
+            ->get()
+            ->makeHidden(['phone', 'email', 'visit_count' , 'ip' , 'updatedOn' , 'publishedOn', 'phone_verified']);
 
-        if (!$models) {
+        if ($models->isEmpty()) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Model not found'
             ], 404);
         }
-        // Total count for frontend
+
         $total = BunnuModel::count();
 
         return response()->json([
@@ -42,12 +39,13 @@ class BunnyModelController extends Controller
     }
 
 
+
     // Get a single model by ID with images and prices
     public function model($username)
     {
         $model = BunnuModel::with(['prices', 'images'])
                     ->where('username', $username)
-                    ->first();
+                    ->first()->makeHidden(['phone', 'email', 'visit_count' , 'ip' , 'updatedOn' , 'publishedOn', 'phone_verified']);
 
         if (!$model) {
             return response()->json([
