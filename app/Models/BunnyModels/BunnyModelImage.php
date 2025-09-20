@@ -1,0 +1,25 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class BunnyModelImage extends Model
+{
+    use HasFactory;
+
+    protected $table = 'bunny_model_images';
+
+    protected $fillable = [
+        'model_id',
+        'image_path',
+        'alt_text',
+        'is_main',
+    ];
+
+    public function model()
+    {
+        return $this->belongsTo(BunnuModel::class, 'model_id');
+    }
+}

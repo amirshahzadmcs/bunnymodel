@@ -1,14 +1,10 @@
-<?php 
-    use App\Http\Controllers\AuthController;
-    use Illuminate\Support\Facades\Route;
+<?php
 
-    Route::post('/register', [AuthController::class, 'register']);
-    Route::post('/login', [AuthController::class, 'login']);
-    Route::middleware('auth:sanctum')->group(function () {
-        Route::get('/user', function (Request $request) {
-            return $request->user();
-        });
-        Route::post('/logout', [AuthController::class, 'logout']);
-    });
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\BunnyModels\BunnyModelController;
 
-?>
+Route::prefix('models')->group(function () {
+    Route::get('/', [BunnyModelController::class, 'index']);           // Get all models
+    Route::get('/{username}', [BunnyModelController::class, 'model']);       // Get single model
+});
