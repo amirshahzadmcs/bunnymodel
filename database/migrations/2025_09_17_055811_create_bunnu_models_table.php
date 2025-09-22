@@ -27,6 +27,7 @@ return new class extends Migration
             $table->string('weight', 20);
             $table->string('height', 20);
             $table->string('nationality', 50);
+            $table->string('living_country', 50);
             $table->string('city', 100);
             $table->string('languages', 200);
             $table->string('currency', 20)->nullable();

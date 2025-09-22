@@ -8,7 +8,17 @@ use App\Models\BunnyModels\BunnuModel;
 
 class BunnyModelController extends Controller
 {   
-    // Get all models with images and prices
+    /**
+     * Display a paginated list of Bunny models with their images and prices.
+     *
+     * This method:
+     * - Accepts optional 'limit' and 'page' query parameters.
+     * - Hides sensitive attributes such as phone, email, IP, etc.
+     * - Returns JSON with models, pagination info, and total count.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function index(Request $request)
     {
         $limit = $request->input('limit', 20);
@@ -40,7 +50,17 @@ class BunnyModelController extends Controller
 
 
 
-    // Get a single model by ID with images and prices
+    /**
+     * Display a single Bunny model by its username with images and prices.
+     *
+     * This method:
+     * - Takes the model's username as a parameter.
+     * - Hides sensitive attributes from the response.
+     * - Returns 404 if the model is not found.
+     *
+     * @param string $username
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function model($username)
     {
         $model = BunnuModel::with(['prices', 'images'])
@@ -61,7 +81,18 @@ class BunnyModelController extends Controller
     }
 
 
-    // Search models by city, nationality, or age
+    /**
+     * Search Bunny models by city, nationality, or age.
+     *
+     * This method:
+     * - Accepts query parameters: city, nationality, age.
+     * - Performs LIKE-based search for city/nationality.
+     * - Returns models matching the criteria with their images and prices.
+     * - Returns 404 if no models found.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function search(Request $request)
     {
         $query = BunnuModel::query();
