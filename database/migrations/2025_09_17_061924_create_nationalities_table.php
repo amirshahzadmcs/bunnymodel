@@ -17,8 +17,9 @@ return new class extends Migration
             $table->string('slug', 100);
             $table->string('city_slug', 100);
             $table->integer('price')->nullable();
-            $table->timestamps();
-
+            
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
             // Indexes
             $table->index('name');
             $table->index('slug');

@@ -15,8 +15,9 @@ return new class extends Migration
             $table->bigIncrements('id'); // Primary Key
             $table->string('name', 100);
             $table->string('slug', 100);
-            $table->timestamps();
-
+            
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
             // Indexes
             $table->index('name');
             $table->index('slug');

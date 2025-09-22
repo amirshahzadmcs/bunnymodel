@@ -17,8 +17,9 @@ return new class extends Migration
             // Foreign key referencing bunnu_models
             $table->unsignedBigInteger('model_id');
             $table->string('image', 255)->nullable();
-
-            $table->timestamps();
+            
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
 
             // Index for faster search
             $table->index('model_id');

@@ -25,8 +25,9 @@ return new class extends Migration
             $table->integer('outcall_1d')->nullable();
             $table->integer('outcall_3d')->nullable();
             $table->integer('outcall_ad')->nullable();
-
-            $table->timestamps();
+            
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
 
             // Index for faster search
             $table->index('model_id');

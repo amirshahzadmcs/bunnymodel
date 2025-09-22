@@ -18,8 +18,9 @@ return new class extends Migration
             // Columns
             $table->string('name', 200);
             $table->string('slug', 200);
-
-            $table->timestamps();
+            
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
 
             // Indexes for faster search
             $table->index('name');
