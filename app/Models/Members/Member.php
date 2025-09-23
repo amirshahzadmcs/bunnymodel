@@ -29,7 +29,11 @@ class Member extends Authenticatable
     ];
 
     // Casts if needed (optional)
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+        ];
+    }
 }
