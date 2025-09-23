@@ -40,6 +40,11 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        'member' => [
+            'driver'    => 'sanctum',   // still uses Sanctum under the hood
+            'provider'  => 'members',
+            'hash'      => true,
+        ],
     ],
 
     /*
@@ -64,7 +69,11 @@ return [
             'driver' => 'eloquent',
             'model' => env('AUTH_MODEL', App\Models\User::class),
         ],
-
+        'members' => [
+            'driver' => 'eloquent',
+            'model' => env('AUTH_MODEL', App\Models\Members\Member::class),
+        ],
+         
         // 'users' => [
         //     'driver' => 'database',
         //     'table' => 'users',

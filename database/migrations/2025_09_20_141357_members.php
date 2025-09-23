@@ -16,9 +16,9 @@ return new class extends Migration
 
             $table->string('first_name');
             $table->string('last_name');
-            $table->string('country');
-            $table->string('nationality');
-            $table->string('phone')->index();      // index for search
+            $table->string('country' , 30)->nullable();
+            $table->string('nationality' , 30)->nullable();
+            $table->string('phone' , 30)->nullable()->index();      // index for search
             $table->string('username')->index();   // index for search
             $table->string('email')->unique()->index(); // unique + index
             $table->string('password');
