@@ -39,4 +39,5 @@ Route::middleware('MemberAuth')->prefix('member')->group(function () {
     Route::get('/is-logged-in', [MembersController::class, 'profile'])->name('profile');
     Route::post('/logout', [MembersController::class, 'logout']);
     Route::post('/update-password', [MembersController::class, 'updatePassword']);
+    
 });
