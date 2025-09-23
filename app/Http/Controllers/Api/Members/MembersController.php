@@ -182,6 +182,7 @@ class MembersController extends Controller
 
         return response()->json([
             'is_logged_in' => false,
+            'status'    => 'error',
             'member'    => null,
             'token'     => null,
         ], 401);
@@ -211,13 +212,19 @@ class MembersController extends Controller
         $member = $request->user('sanctum');
 
         if (! Hash::check($request->current_password, $member->password)) {
-            return response()->json(['message' => 'Current password does not match'], 422);
+            return response()->json([
+                    'status' => 'error',
+                    'message' => 'Current password does not match'
+                ], 422);
         }
 
         $member->password = Hash::make($request->new_password);
         $member->save();
 
-        return response()->json(['message' => 'Password updated successfully']);
+        return response()->json([
+                'status' => 'success',
+                'message' => 'Password updated successfully'
+            ]);
     }
 
     /**

@@ -22,12 +22,10 @@ Route::get('/model/{username}', [BunnyModelController::class, 'model']);
 // Public routes for members
 Route::post('member/register', [MembersController::class, 'register']);
 Route::post('member/login', [MembersController::class, 'login']);
-// Password reset routes (public)
-Route::post('/forgot-password', [MembersController::class, 'sendOtp']);
-Route::post('/verify-otp', [MembersController::class, 'verifyOtp']);
-Route::post('/reset-password', [MembersController::class, 'resetPasswordWithOtp']);
-
-
+// Member Password reset routes (public)
+Route::post('member/forgot-password', [MembersController::class, 'sendOtp']);
+Route::post('member/verify-otp', [MembersController::class, 'verifyOtp']);
+Route::post('member/reset-password', [MembersController::class, 'resetPasswordWithOtp']);
 
 // Check if the currently authenticated member is logged in
 // - Protected route: requires authentication via 'checkApiAuth' middleware
