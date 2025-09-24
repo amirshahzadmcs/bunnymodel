@@ -34,8 +34,9 @@ Route::post('member/reset-password', [MembersController::class, 'resetPasswordWi
 Route::middleware('MemberAuth')->prefix('member')->group(function () {
 
     Route::get('/profile/{username}', [MembersController::class, 'profile'])->name('profile');
+    Route::put('/profile/update', [MembersController::class, 'updateProfile']); // update profile
     Route::get('/is-logged-in', [MembersController::class, 'profile'])->name('profile');
     Route::post('/logout', [MembersController::class, 'logout']);
     Route::post('/update-password', [MembersController::class, 'updatePassword']);
-    
+
 });
