@@ -131,6 +131,49 @@ class MembersController extends Controller
     }
 
     /**
+     * Update the authenticated member profile
+     *
+     * Allows member to edit their profile details.
+     */
+    public function updateProfile(Request $request)
+    {
+        $member = $request->user('sanctum');
+
+        $validator = Validator::make($request->all(), [
+            'first_name'  => 'required|string|max:255',
+            'last_name'   => 'required|string|max:255',
+            'country'     => 'nullable|string|max:255',
+            'nationality' => 'nullable|string|max:255',
+            'phone'       => 'nullable|string|max:20',
+            'username'    => 'required|string|max:50|unique:members,username,' . $member->id,
+            'email'       => 'required|string|email|max:255|unique:members,email,' . $member->id,
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        // Update fields
+        $member->first_name  = $request->first_name;
+        $member->last_name   = $request->last_name;
+        $member->country     = $request->country;
+        $member->nationality = $request->nationality;
+        $member->phone       = $request->phone;
+        $member->username    = $request->username;
+        $member->email       = $request->email;
+        $member->save();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Profile updated successfully',
+            'member' => $member
+        ]);
+    }
+
+    /**
      * Logout the current authenticated member
      *
      * Deletes all tokens for the logged-in member,
