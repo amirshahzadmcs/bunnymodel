@@ -20,16 +20,14 @@ class MembersController extends Controller
      */
     public function register(Request $request)
     {
-       $validator = Validator::make($request->all(), [
-            'first_name'  => 'required|string|max:255',
-            'last_name'   => 'required|string|max:255',
-            'username'    => 'required|string|max:50|unique:members',
+        $validator = Validator::make($request->all(), [
+            'full_name'   => 'required|string|max:255',
             'email'       => 'required|string|email|max:255|unique:members',
             'password'    => [
                 'required',
                 'string',
                 'min:6',
-                'regex:/^(?=.*[A-Z])(?=.*[\W_]).+$/', // At least 1 uppercase and 1 special character
+                'regex:/^(?=.*[A-Z])(?=.*[\W_]).+$/',
             ],
         ], [
             'password.regex' => 'Password must contain at least one uppercase letter and one special character.',
@@ -39,16 +37,15 @@ class MembersController extends Controller
             return response()->json([
                 'status' => 'error',
                 'errors' => $validator->errors()
-            ], 422); // 422 Unprocessable Entity
+            ], 422);
         }
 
+        // Generate username automatically from full_name
+        $username = $this->generateUniqueUsername($request->full_name);
+
         $member = Member::create([
-            'first_name'  => $request->first_name,
-            'last_name'   => $request->last_name,
-            'country'     => $request->country,
-            'nationality' => $request->nationality,
-            'phone'       => $request->phone,
-            'username'    => $request->username,
+            'full_name'  => $request->full_name,
+            'username'    => $username,
             'email'       => $request->email,
             'password'    => Hash::make($request->password),
         ]);
@@ -60,6 +57,7 @@ class MembersController extends Controller
             'token'   => $token,
         ], 201);
     }
+
 
     /**
      * Login member (by email or username)
@@ -118,8 +116,7 @@ class MembersController extends Controller
             'token'     => $token,
             'member' => [
                 'id' => $member->id,
-                'first_name' => $member->first_name,
-                'last_name' => $member->last_name,
+                'full_name' => $member->full_name,
                 'username' => $member->username,
                 'email' => $member->email,
                 'country' => $member->country,
@@ -140,12 +137,10 @@ class MembersController extends Controller
         $member = $request->user('sanctum');
 
         $validator = Validator::make($request->all(), [
-            'first_name'  => 'required|string|max:255',
-            'last_name'   => 'required|string|max:255',
+            'full_name'   => 'required|string|max:255',
             'country'     => 'nullable|string|max:255',
             'nationality' => 'nullable|string|max:255',
             'phone'       => 'nullable|string|max:20',
-            'username'    => 'required|string|max:50|unique:members,username,' . $member->id,
             'email'       => 'required|string|email|max:255|unique:members,email,' . $member->id,
         ]);
 
@@ -156,13 +151,15 @@ class MembersController extends Controller
             ], 422);
         }
 
-        // Update fields
-        $member->first_name  = $request->first_name;
-        $member->last_name   = $request->last_name;
+        // Auto-generate username again if full_name changed
+        if ($member->full_name !== $request->full_name) {
+            $member->username = $this->generateUniqueUsername($request->full_name);
+        }
+
+        $member->full_name   = $request->full_name;
         $member->country     = $request->country;
         $member->nationality = $request->nationality;
         $member->phone       = $request->phone;
-        $member->username    = $request->username;
         $member->email       = $request->email;
         $member->save();
 
@@ -172,6 +169,7 @@ class MembersController extends Controller
             'member' => $member
         ]);
     }
+
 
     /**
      * Logout the current authenticated member
@@ -448,4 +446,26 @@ class MembersController extends Controller
             'message' => 'Password reset successfully. You can now login with your new password.'
         ]);
     }
+
+    private function generateUniqueUsername($fullName)
+    {
+        // Remove special characters & spaces, make lowercase
+        $username = strtolower(preg_replace('/[^a-zA-Z0-9]/', '', str_replace(' ', '', $fullName)));
+
+        // If empty fallback
+        if (empty($username)) {
+            $username = 'user';
+        }
+
+        // Ensure unique username
+        $originalUsername = $username;
+        $counter = 1;
+        while (\App\Models\Members\Member::where('username', $username)->exists()) {
+            $username = $originalUsername . $counter;
+            $counter++;
+        }
+
+        return $username;
+    }
+
 }
