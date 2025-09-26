@@ -45,6 +45,10 @@ return [
             'provider'  => 'members',
             'hash'      => true,
         ],
+        'admin' => [
+            'driver' => 'session',    // for web login
+            'provider' => 'admins',
+        ],
     ],
 
     /*
@@ -72,6 +76,10 @@ return [
         'members' => [
             'driver' => 'eloquent',
             'model' => env('AUTH_MODEL', App\Models\Members\Member::class),
+        ],
+        'admins' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Admin\AdminModel::class,
         ],
          
         // 'users' => [
