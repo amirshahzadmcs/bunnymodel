@@ -12,8 +12,7 @@ class Member extends Authenticatable
 
     // Fillable fields for mass assignment
     protected $fillable = [
-        'first_name',
-        'last_name',
+        'full_name',
         'country',
         'nationality',
         'phone',

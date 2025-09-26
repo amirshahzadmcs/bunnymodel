@@ -14,8 +14,7 @@ return new class extends Migration
         Schema::create('members', function (Blueprint $table) {
             $table->id(); // Primary key (auto-increment)
 
-            $table->string('first_name');
-            $table->string('last_name');
+            $table->string('full_name');
             $table->string('country' , 30)->nullable();
             $table->string('nationality' , 30)->nullable();
             $table->string('phone' , 30)->nullable()->index();      // index for search
