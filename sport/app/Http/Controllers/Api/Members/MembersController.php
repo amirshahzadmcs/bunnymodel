@@ -449,23 +449,27 @@ class MembersController extends Controller
 
     private function generateUniqueUsername($fullName)
     {
-        // Remove special characters & spaces, make lowercase
-        $username = strtolower(preg_replace('/[^a-zA-Z0-9]/', '', str_replace(' ', '', $fullName)));
+        // 1. Convert to lowercase
+        $username = strtolower($fullName);
 
-        // If empty fallback
+        // 2. Replace spaces with nothing & remove special chars
+        $username = preg_replace('/[^a-z0-9]/', '', str_replace(' ', '', $username));
+
+        // 3. Fallback if empty
         if (empty($username)) {
             $username = 'user';
         }
 
-        // Ensure unique username
+        // 4. Ensure unique username
         $originalUsername = $username;
         $counter = 1;
-        while (\App\Models\Members\Member::where('username', $username)->exists()) {
+        while (Member::where('username', $username)->exists()) {
             $username = $originalUsername . $counter;
             $counter++;
         }
 
         return $username;
     }
+
 
 }
