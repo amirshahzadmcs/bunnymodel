@@ -216,9 +216,9 @@ class ComposerStaticInit9d924bc09955033a56fa02ced4375c56
         ),
         'phpDocumentor\\Reflection\\' => 
         array (
-            0 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
-            1 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
-            2 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
+            0 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
+            1 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
+            2 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
         ),
         'Whoops\\' => 
         array (
@@ -627,6 +627,7 @@ class ComposerStaticInit9d924bc09955033a56fa02ced4375c56
 
     public static $classMap = array (
         'App\\Http\\Controllers\\Admin\\AdminController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/AdminController.php',
+        'App\\Http\\Controllers\\Admin\\DashboarController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/DashboarController.php',
         'App\\Http\\Controllers\\Api\\BunnyModels\\BunnyModelController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/BunnyModels/BunnyModelController.php',
         'App\\Http\\Controllers\\Api\\BunnyModels\\BunnyModelImagesController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/BunnyModels/BunnyModelImagesController.php',
         'App\\Http\\Controllers\\Api\\BunnyModels\\BunnyPriceController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/BunnyModels/BunnyPriceController.php',
@@ -644,6 +645,7 @@ class ComposerStaticInit9d924bc09955033a56fa02ced4375c56
         'App\\Http\\Controllers\\ProfileController' => __DIR__ . '/../..' . '/app/Http/Controllers/ProfileController.php',
         'App\\Http\\Controllers\\Settings\\PasswordController' => __DIR__ . '/../..' . '/app/Http/Controllers/Settings/PasswordController.php',
         'App\\Http\\Controllers\\Settings\\ProfileController' => __DIR__ . '/../..' . '/app/Http/Controllers/Settings/ProfileController.php',
+        'App\\Http\\Middleware\\AdminPermission' => __DIR__ . '/../..' . '/app/Http/Middleware/AdminPermission.php',
         'App\\Http\\Middleware\\HandleAppearance' => __DIR__ . '/../..' . '/app/Http/Middleware/HandleAppearance.php',
         'App\\Http\\Middleware\\HandleInertiaRequests' => __DIR__ . '/../..' . '/app/Http/Middleware/HandleInertiaRequests.php',
         'App\\Http\\Middleware\\MemberAuth' => __DIR__ . '/../..' . '/app/Http/Middleware/MemberAuth.php',
@@ -651,6 +653,8 @@ class ComposerStaticInit9d924bc09955033a56fa02ced4375c56
         'App\\Http\\Requests\\ProfileUpdateRequest' => __DIR__ . '/../..' . '/app/Http/Requests/ProfileUpdateRequest.php',
         'App\\Http\\Requests\\Settings\\ProfileUpdateRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Settings/ProfileUpdateRequest.php',
         'App\\Models\\Admin\\AdminModel' => __DIR__ . '/../..' . '/app/Models/Admin/AdminModel.php',
+        'App\\Models\\Admin\\PermissionsModel' => __DIR__ . '/../..' . '/app/Models/Admin/PermissionsModel.php',
+        'App\\Models\\Admin\\Role' => __DIR__ . '/../..' . '/app/Models/Admin/Role.php',
         'App\\Models\\BunnyModels\\BunnuModel' => __DIR__ . '/../..' . '/app/Models/BunnyModels/BunnuModel.php',
         'App\\Models\\BunnyModels\\BunnyModelImage' => __DIR__ . '/../..' . '/app/Models/BunnyModels/BunnyModelImage.php',
         'App\\Models\\BunnyModels\\BunnyModelPrice' => __DIR__ . '/../..' . '/app/Models/BunnyModels/BunnyModelPrice.php',
@@ -780,6 +784,8 @@ class ComposerStaticInit9d924bc09955033a56fa02ced4375c56
         'Database\\Seeders\\DatabaseSeeder' => __DIR__ . '/../..' . '/database/seeders/DatabaseSeeder.php',
         'Database\\Seeders\\LanguagesTableSeeder' => __DIR__ . '/../..' . '/database/seeders/LanguagesTableSeeder.php',
         'Database\\Seeders\\NationalitiesTableSeeder' => __DIR__ . '/../..' . '/database/seeders/NationalitiesTableSeeder.php',
+        'Database\\Seeders\\PermissionsTableSeeder' => __DIR__ . '/../..' . '/database/seeders/PermissionsTableSeeder.php',
+        'Database\\Seeders\\RolesTableSeeder' => __DIR__ . '/../..' . '/database/seeders/RolesTableSeeder.php',
         'DateError' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/DateError.php',
         'DateException' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/DateException.php',
         'DateInvalidOperationException' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/DateInvalidOperationException.php',

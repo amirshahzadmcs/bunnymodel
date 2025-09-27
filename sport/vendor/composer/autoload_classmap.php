@@ -7,6 +7,7 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'App\\Http\\Controllers\\Admin\\AdminController' => $baseDir . '/app/Http/Controllers/Admin/AdminController.php',
+    'App\\Http\\Controllers\\Admin\\DashboarController' => $baseDir . '/app/Http/Controllers/Admin/DashboarController.php',
     'App\\Http\\Controllers\\Api\\BunnyModels\\BunnyModelController' => $baseDir . '/app/Http/Controllers/Api/BunnyModels/BunnyModelController.php',
     'App\\Http\\Controllers\\Api\\BunnyModels\\BunnyModelImagesController' => $baseDir . '/app/Http/Controllers/Api/BunnyModels/BunnyModelImagesController.php',
     'App\\Http\\Controllers\\Api\\BunnyModels\\BunnyPriceController' => $baseDir . '/app/Http/Controllers/Api/BunnyModels/BunnyPriceController.php',
@@ -24,6 +25,7 @@ return array(
     'App\\Http\\Controllers\\ProfileController' => $baseDir . '/app/Http/Controllers/ProfileController.php',
     'App\\Http\\Controllers\\Settings\\PasswordController' => $baseDir . '/app/Http/Controllers/Settings/PasswordController.php',
     'App\\Http\\Controllers\\Settings\\ProfileController' => $baseDir . '/app/Http/Controllers/Settings/ProfileController.php',
+    'App\\Http\\Middleware\\AdminPermission' => $baseDir . '/app/Http/Middleware/AdminPermission.php',
     'App\\Http\\Middleware\\HandleAppearance' => $baseDir . '/app/Http/Middleware/HandleAppearance.php',
     'App\\Http\\Middleware\\HandleInertiaRequests' => $baseDir . '/app/Http/Middleware/HandleInertiaRequests.php',
     'App\\Http\\Middleware\\MemberAuth' => $baseDir . '/app/Http/Middleware/MemberAuth.php',
@@ -31,6 +33,8 @@ return array(
     'App\\Http\\Requests\\ProfileUpdateRequest' => $baseDir . '/app/Http/Requests/ProfileUpdateRequest.php',
     'App\\Http\\Requests\\Settings\\ProfileUpdateRequest' => $baseDir . '/app/Http/Requests/Settings/ProfileUpdateRequest.php',
     'App\\Models\\Admin\\AdminModel' => $baseDir . '/app/Models/Admin/AdminModel.php',
+    'App\\Models\\Admin\\PermissionsModel' => $baseDir . '/app/Models/Admin/PermissionsModel.php',
+    'App\\Models\\Admin\\Role' => $baseDir . '/app/Models/Admin/Role.php',
     'App\\Models\\BunnyModels\\BunnuModel' => $baseDir . '/app/Models/BunnyModels/BunnuModel.php',
     'App\\Models\\BunnyModels\\BunnyModelImage' => $baseDir . '/app/Models/BunnyModels/BunnyModelImage.php',
     'App\\Models\\BunnyModels\\BunnyModelPrice' => $baseDir . '/app/Models/BunnyModels/BunnyModelPrice.php',
@@ -160,6 +164,8 @@ return array(
     'Database\\Seeders\\DatabaseSeeder' => $baseDir . '/database/seeders/DatabaseSeeder.php',
     'Database\\Seeders\\LanguagesTableSeeder' => $baseDir . '/database/seeders/LanguagesTableSeeder.php',
     'Database\\Seeders\\NationalitiesTableSeeder' => $baseDir . '/database/seeders/NationalitiesTableSeeder.php',
+    'Database\\Seeders\\PermissionsTableSeeder' => $baseDir . '/database/seeders/PermissionsTableSeeder.php',
+    'Database\\Seeders\\RolesTableSeeder' => $baseDir . '/database/seeders/RolesTableSeeder.php',
     'DateError' => $vendorDir . '/symfony/polyfill-php83/Resources/stubs/DateError.php',
     'DateException' => $vendorDir . '/symfony/polyfill-php83/Resources/stubs/DateException.php',
     'DateInvalidOperationException' => $vendorDir . '/symfony/polyfill-php83/Resources/stubs/DateInvalidOperationException.php',
