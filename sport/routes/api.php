@@ -27,6 +27,8 @@ Route::post('member/forgot-password', [MembersController::class, 'sendOtp']);
 Route::post('member/verify-otp', [MembersController::class, 'verifyOtp']);
 Route::post('member/reset-password', [MembersController::class, 'resetPasswordWithOtp']);
 
+Route::get('member/verify-email/{token}', [MembersController::class, 'verifyEmail']);
+
 // Check if the currently authenticated member is logged in
 // - Protected route: requires authentication via 'checkApiAuth' middleware
 // - Returns 401 JSON response if the user is not logged in

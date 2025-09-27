@@ -21,12 +21,6 @@ class BunnyModelController extends Controller
      */
     public function index(Request $request)
     {
-        if (!$request->isMethod('post')) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Invalid request method. Use GET only.'
-            ], 405);
-        }
 
         $limit = $request->input('limit', 20);
         $page = $request->input('page', 1);
@@ -54,7 +48,6 @@ class BunnyModelController extends Controller
             'total' => $total
         ]);
     }
-
 
 
     /**

@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('username')->index();   // index for search
             $table->string('email')->unique()->index(); // unique + index
             $table->string('password');
+            $table->string('verification_token')->nullable();
             $table->string('profile_status', 20)->default('pending')->comment('Status of the record')->index();
             $table->string('email_status', 20)->default('pending')->comment('Status of the record')->index();
             
