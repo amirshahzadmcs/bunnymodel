@@ -21,7 +21,7 @@ class BunnyModelController extends Controller
      */
     public function index(Request $request)
     {
-        if (!$request->isMethod('post')) {
+        if (!$request->isMethod('get')) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Invalid request method. Use GET only.'
