@@ -7,6 +7,7 @@ use App\Models\Members\Member;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
 
@@ -43,12 +44,23 @@ class MembersController extends Controller
         // Generate username automatically from full_name
         $username = $this->generateUniqueUsername($request->full_name);
 
+        $verificationToken = Str::random(64);
+
         $member = Member::create([
             'full_name'  => $request->full_name,
             'username'    => $username,
             'email'       => $request->email,
             'password'    => Hash::make($request->password),
+            'verification_token' => $verificationToken,
         ]);
+
+        // Send verification email
+        $verificationUrl = url('/api/verify-email/' . $verificationToken);
+
+        Mail::send('emails.verify-member', ['url' => $verificationUrl, 'member' => $member], function ($message) use ($member) {
+            $message->to($member->email);
+            $message->subject('Verify your email address');
+        });
 
         $token = $member->createToken('auth_token')->plainTextToken;
 
@@ -56,6 +68,28 @@ class MembersController extends Controller
             'success' => 'Member registered successfully',
             'token'   => $token,
         ], 201);
+    }
+
+
+    public function verifyEmail($token)
+    {
+        $member = Member::where('verification_token', $token)->first();
+
+        if (! $member) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Invalid or expired verification token.'
+            ], 400);
+        }
+
+        $member->email_verified_at = now();
+        $member->verification_token = null;
+        $member->save();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Your email has been successfully verified.'
+        ]);
     }
 
 
