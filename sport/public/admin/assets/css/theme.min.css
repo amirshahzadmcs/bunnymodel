@@ -135,7 +135,7 @@
   color-scheme: dark;
   --phoenix-body-color: #9fa6bc;
   --phoenix-body-color-rgb: 159, 166, 188;
-  --phoenix-body-bg: #0f111a;
+  --phoenix-body-bg: #000;
   --phoenix-body-bg-rgb: 15, 17, 26;
   --phoenix-emphasis-color: #eff2f6;
   --phoenix-emphasis-color-rgb: 239, 242, 246;
@@ -467,8 +467,8 @@
   --phoenix-quaternary-color-rgb: 96, 105, 129;
   --phoenix-quaternary-bg: #3e465b;
   --phoenix-quaternary-bg-rgb: 62, 70, 91;
-  --phoenix-emphasis-bg: #141824;
-  --phoenix-emphasis-bg-rgb: 20, 24, 36;
+  --phoenix-emphasis-bg: #080808;
+  --phoenix-emphasis-bg-rgb: #080808;
   --phoenix-body-highlight-color: #cbd0dd;
   --phoenix-body-highlight-color-rgb: 203, 208, 221;
   --phoenix-body-highlight-bg: #222834;

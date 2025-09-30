@@ -1,1 +1,1 @@
-self.__REACT_LOADABLE_MANIFEST="{\"pages\\\\Profile\\\\index.js -> ../../src/components/app/Profile/Profile\":{\"id\":\"pages\\\\Profile\\\\index.js -> ../../src/components/app/Profile/Profile\",\"files\":[\"static/chunks/src_components_app_Profile_Profile_jsx.js\"]}}"
+self.__REACT_LOADABLE_MANIFEST="{}"

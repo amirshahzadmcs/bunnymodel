@@ -20,4 +20,5 @@
 /sport/storage/pail
 /sport/vendor
 /sport/Homestead.json
-/sport/Homestead.yaml
+/fronend/node_modules
+node_modules
