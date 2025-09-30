@@ -5,6 +5,7 @@ namespace App\Models\Admin;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Models\Admin\PermissionsModel;
 
 class AdminModel extends Authenticatable
 {
@@ -106,11 +107,11 @@ class AdminModel extends Authenticatable
     public function permissions()
     {
         return $this->belongsToMany(
-            Permission::class,
-            'model_has_permissions',
-            'model_id',
-            'permission_id'
-        )->withPivot('model_type');
+            PermissionsModel::class,
+            'admin_has_permissions', // or 'model_has_permissions' if following Spatie
+            'admin_id',               // foreign key on pivot for admin
+            'permission_id'           // foreign key on pivot for permission
+        )->withPivot('admin_type');   // matches your pivot structure
     }
 
 }

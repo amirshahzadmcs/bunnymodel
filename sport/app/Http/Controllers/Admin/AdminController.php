@@ -35,7 +35,7 @@ class AdminController extends Controller
         ]);
 
         // Assign Super Admin role properly
-        $roleId = Role::value('slug');
+        $roleId = Role::where('slug', 'super-admin')->value('id');
         if ($roleId) {
             $admin->roles()->attach($roleId, ['admin_type' => AdminModel::class]);
         }

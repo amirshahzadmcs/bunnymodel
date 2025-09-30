@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Crypt;
+
 
 class MembersController extends Controller
 {
@@ -19,16 +21,18 @@ class MembersController extends Controller
      * Validates incoming request data, creates a new member,
      * hashes the password, and returns an auth token.
      */
-    public function register(Request $request)
+
+   public function register(Request $request)
     {
+        // 1. Validate input (except uniqueness for email)
         $validator = Validator::make($request->all(), [
-            'full_name'   => 'required|string|max:255',
-            'email'       => 'required|string|email|max:255|unique:members',
-            'password'    => [
+            'full_name' => 'required|string|max:255',
+            'email'     => 'required|string|email|max:255',
+            'password'  => [
                 'required',
                 'string',
                 'min:6',
-                'regex:/^(?=.*[A-Z])(?=.*[\W_]).+$/',
+                'regex:/^(?=.*[A-Z])(?=.*[\W_]).+$/', // at least one uppercase & one special char
             ],
         ], [
             'password.regex' => 'Password must contain at least one uppercase letter and one special character.',
@@ -41,56 +45,95 @@ class MembersController extends Controller
             ], 422);
         }
 
-        // Generate username automatically from full_name
+        // 2. Check for duplicate email manually (all emails are encrypted)
+        $members = Member::all();
+        foreach ($members as $m) {
+            try {
+                if ($m->email === $request->email) {
+                    return response()->json([
+                        'status' => 'error',
+                        'errors' => ['email' => ['This email is already registered.']]
+                    ], 422);
+                }
+            } catch (\Exception $e) {
+                continue; // skip if decryption fails
+            }
+        }
+
+        // 3. Generate unique username
         $username = $this->generateUniqueUsername($request->full_name);
 
+        // 4. Create a verification token
         $verificationToken = Str::random(64);
 
+        // 5. Create member (model handles encryption)
         $member = Member::create([
-            'full_name'  => $request->full_name,
-            'username'    => $username,
-            'email'       => $request->email,
-            'password'    => Hash::make($request->password),
-            'verification_token' => $verificationToken,
+            'full_name'         => $request->full_name,
+            'username'          => $username,
+            'email'             => $request->email,
+            'password'          => Hash::make($request->password),
+            'verification_token'=> $verificationToken,
         ]);
 
-        // Send verification email
+        // 6. Build verification URL
         $verificationUrl = url('/api/verify-email/' . $verificationToken);
 
-        Mail::send('emails.verify-member', ['url' => $verificationUrl, 'member' => $member], function ($message) use ($member) {
-            $message->to($member->email);
-            $message->subject('Verify your email address');
-        });
-
+        /* 7. Send verification email (raw email, no view needed)
+        Mail::raw(
+            "Hello {$member->full_name},\n\nPlease verify your email by clicking the link below:\n\n$verificationUrl\n\nThank you.",
+            function ($message) use ($member) {
+                // Use decrypted email for sending
+                $message->to(Crypt::decryptString($member->email));
+                $message->subject('Verify your email address');
+            }
+        );
+        */
+        // 8. Create Sanctum token
         $token = $member->createToken('auth_token')->plainTextToken;
 
+        // 9. Return response
         return response()->json([
-            'success' => 'Member registered successfully',
+            'status'  => 'success',
+            'message' => 'Member registered successfully. Please verify your email.',
             'token'   => $token,
         ], 201);
     }
 
 
+
+
     public function verifyEmail($token)
     {
+        // Find member with the given token
         $member = Member::where('verification_token', $token)->first();
 
+        // Handle invalid token
         if (! $member) {
             return response()->json([
-                'status' => 'error',
+                'status'  => 'error',
                 'message' => 'Invalid or expired verification token.'
             ], 400);
         }
 
-        $member->email_verified_at = now();
+        // If already verified
+        if ($member->email_status === 'approved') {
+            return response()->json([
+                'status'  => 'info',
+                'message' => 'Your email is already verified.'
+            ], 200);
+        }
+
+        // Mark email as verified
+        $member->email_status = 'approved';
         $member->verification_token = null;
         $member->save();
 
         return response()->json([
-            'status' => 'success',
+            'status'  => 'success',
             'message' => 'Your email has been successfully verified.'
-        ]);
+        ], 200);
     }
+
 
 
     /**
@@ -101,6 +144,7 @@ class MembersController extends Controller
      */
     public function login(Request $request)
     {
+        // Validate input
         $validator = Validator::make($request->all(), [
             'username' => 'required|string', // can be email or username
             'password' => 'required|string',
@@ -110,29 +154,55 @@ class MembersController extends Controller
             return response()->json([
                 'status' => 'error',
                 'errors' => $validator->errors()
-            ], 422); // 422 Unprocessable Entity
+            ], 422);
         }
 
-        $member = Member::where('email', $request->username)
-                    ->orWhere('username', $request->username)
-                    ->first();
+        // Because fields are encrypted in DB, we must check manually
+        $members = Member::all();
+        $member = null;
 
+        foreach ($members as $m) {
+            // Accessors in your model automatically decrypt values
+            $email    = $m->email;     // already decrypted
+            $username = $m->username;  // already decrypted
+
+            if ($request->username === $email || $request->username === $username) {
+                $member = $m;
+                break;
+            }
+        }
+
+        // Check password
         if (! $member || ! Hash::check($request->password, $member->password)) {
             return response()->json([
                 'status'  => 'error',
                 'message' => 'The provided credentials are incorrect.'
-            ], 401); // 401 Unauthorized
+            ], 401);
         }
 
+        // Issue token
         $token = $member->createToken('auth_token')->plainTextToken;
+
+        // Build decrypted response automatically
+        $decryptedMember = [
+            'id'         => $member->id,
+            'full_name'  => $member->full_name,  // already decrypted
+            'username'   => $member->username,   // already decrypted
+            'email'      => $member->email,      // already decrypted
+            'country'    => $member->country,
+            'nationality'=> $member->nationality,
+            'phone'      => $member->phone,
+            'email_status'=> $member->email_status ?? null,
+        ];
 
         return response()->json([
             'message' => 'Login successful',
             'status'  => 'success',
-            'member'  => $member,
+            'member'  => $decryptedMember,
             'token'   => $token,
         ]);
     }
+
 
     /**
      * Get the currently authenticated member profile
@@ -141,25 +211,32 @@ class MembersController extends Controller
      */
     public function profile(Request $request)
     {
-        $member = $request->user('sanctum'); // authenticated user via Sanctum
+        // Authenticated user via Sanctum
+        $member = $request->user('sanctum');
 
+        // Issue a new token (if you really need a fresh token here)
         $token = $member->createToken('auth_token')->plainTextToken;
+
+        // Because of model accessors, all fields below are already decrypted automatically
+        $decryptedMember = [
+            'id'           => $member->id,
+            'full_name'    => $member->full_name,
+            'username'     => $member->username,
+            'email'        => $member->email,
+            'country'      => $member->country,
+            'nationality'  => $member->nationality,
+            'phone'        => $member->phone,
+            'email_status' => $member->email_status ?? null,
+            'created_at'   => $member->created_at,
+        ];
 
         return response()->json([
             'status' => 'success',
-            'token'     => $token,
-            'member' => [
-                'id' => $member->id,
-                'full_name' => $member->full_name,
-                'username' => $member->username,
-                'email' => $member->email,
-                'country' => $member->country,
-                'nationality' => $member->nationality,
-                'phone' => $member->phone,
-                'created_at' => $member->created_at,
-            ]
+            'token'  => $token,
+            'member' => $decryptedMember,
         ]);
     }
+
 
     /**
      * Update the authenticated member profile
@@ -170,12 +247,18 @@ class MembersController extends Controller
     {
         $member = $request->user('sanctum');
 
+        // Validate input
         $validator = Validator::make($request->all(), [
             'full_name'   => 'required|string|max:255',
             'country'     => 'nullable|string|max:255',
             'nationality' => 'nullable|string|max:255',
             'phone'       => 'nullable|string|max:20',
-            'email'       => 'required|string|email|max:255|unique:members,email,' . $member->id,
+            'email'       => [
+                'required',
+                'string',
+                'email',
+                'max:255'
+            ],
         ]);
 
         if ($validator->fails()) {
@@ -190,6 +273,7 @@ class MembersController extends Controller
             $member->username = $this->generateUniqueUsername($request->full_name);
         }
 
+        // Assign values (model automatically encrypts them)
         $member->full_name   = $request->full_name;
         $member->country     = $request->country;
         $member->nationality = $request->nationality;
@@ -197,12 +281,24 @@ class MembersController extends Controller
         $member->email       = $request->email;
         $member->save();
 
+        // Build decrypted response (model already decrypts on get)
+        $decryptedMember = [
+            'full_name'    => $member->full_name,
+            'username'     => $member->username,
+            'email'        => $member->email,
+            'country'      => $member->country,
+            'nationality'  => $member->nationality,
+            'phone'        => $member->phone,
+            'email_status' => $member->email_status ?? null,
+        ];
+
         return response()->json([
-            'status' => 'success',
+            'status'  => 'success',
             'message' => 'Profile updated successfully',
-            'member' => $member
+            'member'  => $decryptedMember
         ]);
     }
+
 
 
     /**
@@ -241,7 +337,7 @@ class MembersController extends Controller
         $member = $request->user('sanctum');
 
         if ($member) {
-            // Optional: revoke old tokens first to avoid token buildup
+            // Revoke old tokens
             $member->tokens()->delete();
 
             // Create a new token
@@ -249,19 +345,20 @@ class MembersController extends Controller
 
             return response()->json([
                 'is_logged_in' => true,
-                'status'  => 'success',
-                'member'    => $member,
-                'token'     => $token,
+                'status'       => 'success',
+                'member'       => $member,
+                'token'        => $token,
             ]);
         }
 
         return response()->json([
             'is_logged_in' => false,
-            'status'    => 'error',
-            'member'    => null,
-            'token'     => null,
+            'status'       => 'error',
+            'member'       => null,
+            'token'        => null,
         ], 401);
     }
+
 
 
     
@@ -272,48 +369,10 @@ class MembersController extends Controller
      */
     public function updatePassword(Request $request)
     {
+        // Validate input
         $validator = Validator::make($request->all(), [
-            'current_password' => 'required',
-            'new_password'     => 'required|string|min:6|confirmed',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => 'error',
-                'errors' => $validator->errors()
-            ], 422); // 422 Unprocessable Entity
-        }
-
-        $member = $request->user('sanctum');
-
-        if (! Hash::check($request->current_password, $member->password)) {
-            return response()->json([
-                    'status' => 'error',
-                    'message' => 'Current password does not match'
-                ], 422);
-        }
-
-        $member->password = Hash::make($request->new_password);
-        $member->save();
-
-        return response()->json([
-                'status' => 'success',
-                'message' => 'Password updated successfully'
-            ]);
-    }
-
-    /**
-     * Send OTP to member's email for password reset
-     *
-     * Generates a 6-digit OTP, stores it in cache for 10 minutes,
-     * and sends it to the member's registered email.
-     */
-    public function sendOtp(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email|exists:members,email',
-        ], [
-            'email.exists' => 'No account found with this email address.',
+            'current_password'      => 'required',
+            'new_password'          => 'required|string|min:6|confirmed', // requires new_password_confirmation
         ]);
 
         if ($validator->fails()) {
@@ -323,34 +382,95 @@ class MembersController extends Controller
             ], 422);
         }
 
-        $email = $request->email;
-        
-        // Generate 6-digit OTP
-        $otp = rand(100000, 999999);
-        
-        // Store OTP in cache for 10 minutes (600 seconds)
-        Cache::put('password_reset_otp_' . $email, $otp, 600);
-        
-        // Store email in cache for verification step
-        Cache::put('otp_email_' . $email, $email, 600);
+        $member = $request->user('sanctum');
 
-        try {
-            // Send OTP via email
-            Mail::to($email)->send(new PasswordResetOtp($otp));
-            
+        // Verify current password
+        if (! Hash::check($request->current_password, $member->password)) {
             return response()->json([
-                'status' => 'success',
-                'message' => 'OTP sent successfully to your email address.',
-                'email' => $email // Return email for frontend reference
-            ]);
-            
-        } catch (\Exception $e) {
+                'status'  => 'error',
+                'message' => 'Current password does not match'
+            ], 422);
+        }
+
+        // Update password
+        $member->password = Hash::make($request->new_password);
+        $member->save();
+
+        // (Optional but recommended) Revoke all tokens so user must re-login
+        $member->tokens()->delete();
+
+        return response()->json([
+            'status'  => 'success',
+            'message' => 'Password updated successfully. Please login again.'
+        ]);
+    }
+
+    /**
+     * Send OTP to member's email for password reset
+     *
+     * Generates a 6-digit OTP, stores it in cache for 10 minutes,
+     * and sends it to the member's registered email.
+     */
+
+    public function sendOtp(Request $request)
+    {
+        // Validate email format only
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+        ]);
+
+        if ($validator->fails()) {
             return response()->json([
                 'status' => 'error',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $emailInput = $request->email;
+
+        // Find member by decrypting emails
+        $member = Member::all()->first(function($m) use ($emailInput) {
+            try {
+                return $m->email === $emailInput;
+            } catch (\Exception $e) {
+                return false;
+            }
+        });
+
+        if (! $member) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'No account found with this email address.'
+            ], 404);
+        }
+
+        // Generate 6-digit OTP
+        $otp = rand(100000, 999999);
+
+        // Store OTP in cache for 10 minutes
+        Cache::put('password_reset_otp_' . $emailInput, $otp, 600);
+
+        try {
+            // Send OTP via plain text email
+            Mail::raw("Your password reset OTP is: $otp. It will expire in 10 minutes.", function ($message) use ($emailInput) {
+                $message->to($emailInput)
+                        ->subject('Password Reset OTP');
+            });
+
+            return response()->json([
+                'status'  => 'success',
+                'message' => 'OTP sent successfully to your email address.',
+                'email'   => $emailInput
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status'  => 'error',
                 'message' => 'Failed to send OTP. Please try again later.'
             ], 500);
         }
     }
+
 
     /**
      * Verify OTP for password reset
@@ -362,7 +482,7 @@ class MembersController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'email' => 'required|email',
-            'otp' => 'required|numeric|digits:6',
+            'otp'   => 'required|numeric|digits:6',
         ]);
 
         if ($validator->fails()) {
@@ -373,39 +493,39 @@ class MembersController extends Controller
         }
 
         $email = $request->email;
-        $otp = $request->otp;
-        
-        // Retrieve stored OTP from cache
+        $otp   = $request->otp;
+
+        // Retrieve OTP from cache
         $storedOtp = Cache::get('password_reset_otp_' . $email);
-        
+
         if (!$storedOtp) {
             return response()->json([
-                'status' => 'error',
+                'status'  => 'error',
                 'message' => 'OTP has expired. Please request a new one.'
             ], 422);
         }
 
-        if ($storedOtp != $otp) {
+        if ($storedOtp !== (int) $otp) {
             return response()->json([
-                'status' => 'error',
+                'status'  => 'error',
                 'message' => 'Invalid OTP. Please check and try again.'
             ], 422);
         }
 
-        // Generate a verification token for password reset
-        $verificationToken = Hash::make($email . $otp . time());
-        
+        // Generate a secure verification token
+        $verificationToken = Str::random(64);
+
         // Store verification token in cache for 10 minutes
         Cache::put('password_reset_token_' . $email, $verificationToken, 600);
-        
-        // Clear the OTP after successful verification
+
+        // Remove OTP after successful verification
         Cache::forget('password_reset_otp_' . $email);
 
         return response()->json([
-            'status' => 'success',
-            'message' => 'OTP verified successfully.',
+            'status'             => 'success',
+            'message'            => 'OTP verified successfully.',
             'verification_token' => $verificationToken,
-            'email' => $email
+            'email'              => $email
         ]);
     }
 
@@ -417,18 +537,17 @@ class MembersController extends Controller
     public function resetPasswordWithOtp(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'email' => 'required|email|exists:members,email',
+            'email'              => 'required|email',
             'verification_token' => 'required|string',
-            'password' => [
+            'password'           => [
                 'required',
                 'string',
                 'min:6',
-                'confirmed',
+                'confirmed', // requires password_confirmation
                 'regex:/^(?=.*[A-Z])(?=.*[\W_]).+$/',
             ],
         ], [
             'password.regex' => 'Password must contain at least one uppercase letter and one special character.',
-            'email.exists' => 'No account found with this email address.',
         ]);
 
         if ($validator->fails()) {
@@ -440,43 +559,51 @@ class MembersController extends Controller
 
         $email = $request->email;
         $verificationToken = $request->verification_token;
-        $password = $request->password;
+        $newPassword = $request->password;
 
         // Retrieve stored verification token from cache
         $storedToken = Cache::get('password_reset_token_' . $email);
-        
+
         if (!$storedToken) {
             return response()->json([
-                'status' => 'error',
+                'status'  => 'error',
                 'message' => 'Reset session has expired. Please start the process again.'
             ], 422);
         }
 
-        if (!Hash::check($verificationToken, $storedToken)) {
+        // Compare tokens (simple string comparison)
+        if ($verificationToken !== $storedToken) {
             return response()->json([
-                'status' => 'error',
+                'status'  => 'error',
                 'message' => 'Invalid verification token.'
             ], 422);
         }
 
-        // Find member and update password
-        $member = Member::where('email', $email)->first();
-        
+        // Find member by decrypting emails
+        $member = Member::all()->first(function($m) use ($email) {
+            try {
+                return $m->email === $email;
+            } catch (\Exception $e) {
+                return false;
+            }
+        });
+
         if (!$member) {
             return response()->json([
-                'status' => 'error',
+                'status'  => 'error',
                 'message' => 'Member not found.'
             ], 404);
         }
 
-        $member->password = Hash::make($password);
+        // Update password (hashed)
+        $member->password = Hash::make($newPassword);
         $member->save();
 
-        // Clear the verification token after successful password reset
+        // Clear verification token
         Cache::forget('password_reset_token_' . $email);
 
         return response()->json([
-            'status' => 'success',
+            'status'  => 'success',
             'message' => 'Password reset successfully. You can now login with your new password.'
         ]);
     }
@@ -486,7 +613,7 @@ class MembersController extends Controller
         // 1. Convert to lowercase
         $username = strtolower($fullName);
 
-        // 2. Replace spaces with nothing & remove special chars
+        // 2. Remove spaces and special characters
         $username = preg_replace('/[^a-z0-9]/', '', str_replace(' ', '', $username));
 
         // 3. Fallback if empty
@@ -494,10 +621,22 @@ class MembersController extends Controller
             $username = 'user';
         }
 
-        // 4. Ensure unique username
         $originalUsername = $username;
         $counter = 1;
-        while (Member::where('username', $username)->exists()) {
+
+        // 4. Loop through all members to check uniqueness
+        $members = Member::all(); // fetch all members
+        $existingUsernames = [];
+
+        foreach ($members as $member) {
+            try {
+                $existingUsernames[] = Crypt::decryptString($member->username);
+            } catch (\Exception $e) {
+                continue; // skip if decryption fails
+            }
+        }
+
+        while (in_array($username, $existingUsernames)) {
             $username = $originalUsername . $counter;
             $counter++;
         }
