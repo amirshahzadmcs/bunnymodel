@@ -71,7 +71,7 @@ export default function Home() {
             color=" #cccccc;"
             fontFamily="Aileron"
             textAlign={"center"}
-            mb={"10px"}
+            mb={"12px"}
             position="relative"
             letterSpacing={"2px"}
           >
