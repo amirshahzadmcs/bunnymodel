@@ -12,7 +12,7 @@ import {
 export default function Footer() {
   return (
     <Box bg="black" width="100%">
-      <Container maxW="1200px" py={8}>
+      <Container maxW="1671.74px" py={8}>
         {/* Main Footer Content */}
         <Flex
           justify="space-between"
@@ -34,15 +34,16 @@ export default function Footer() {
             align="flex-start"
             spacing={4}
             color="white"
-            fontSize="16px"
-            fontFamily="sans-serif"
+            fontSize="15px"
+            fontFamily="Aileron, sans-serif"
+            gap={'15px'}
           >
             <Link
-              href="#"
+              href="/Philosophy"
               color="#808080"
               fontSize="15px"
-              fontFamily="Aileron"
-              lineHeight={"39.66px"}
+              fontFamily="Aileron, sans-serif"
+             
               letterSpacing={"9%"}
               _hover={{ color: "#ccc" }}
             >
@@ -52,19 +53,19 @@ export default function Footer() {
               href="#"
               color="#808080"
               fontSize="15px"
-              fontFamily="Aileron"
-              lineHeight={"39.66px"}
+              fontFamily="Aileron, sans-serif"
+              
               letterSpacing={"9%"}
               _hover={{ color: "#ccc" }}
             >
               Members
             </Link>
             <Link
-              href="#"
+              href="/Blog"
               color="#808080"
               fontSize="15px"
-              fontFamily="Aileron"
-              lineHeight={"39.66px"}
+              fontFamily="Aileron, sans-serif"
+              
               letterSpacing={"9%"}
               _hover={{ color: "#ccc" }}
             >
@@ -90,27 +91,28 @@ export default function Footer() {
             spacing={4}
             color="#808080"
             fontSize="15px"
-            fontFamily="Aileron"
-            lineHeight={"39.66px"}
+            fontFamily="Aileron, sans-serif"
+            gap={'15px'}
+           
             letterSpacing={"9%"}
           >
             <Link
               href="#"
               color="#808080"
               fontSize="15px"
-              fontFamily="Aileron"
-              lineHeight={"39.66px"}
+              fontFamily="Aileron, sans-serif"
+             
               letterSpacing={"9%"}
               _hover={{ color: "#ccc" }}
             >
               Concierge
             </Link>
             <Link
-              href="#"
+              href="/Apply"
               color="#808080"
               fontSize="15px"
-              fontFamily="Aileron"
-              lineHeight={"39.66px"}
+              fontFamily="Aileron, sans-serif"
+             
               letterSpacing={"9%"}
               _hover={{ color: "#ccc" }}
             >
@@ -120,8 +122,8 @@ export default function Footer() {
               href="#"
               color="#808080"
               fontSize="15px"
-              fontFamily="Aileron"
-              lineHeight={"39.66px"}
+              fontFamily="Aileron, sans-serif"
+             
               letterSpacing={"9%"}
               _hover={{ color: "#ccc" }}
             >
@@ -140,7 +142,7 @@ export default function Footer() {
             align="center"
             fontSize="12px"
             color="#808080"
-            fontFamily="Aileron"
+            fontFamily="Aileron, sans-serif"
             lineHeight={"16px"}
           >
             <Link href="#" _hover={{ color: "#ccc" }}>
@@ -160,7 +162,7 @@ export default function Footer() {
           <Text
             fontSize="14px"
             color="#80808099"
-            fontFamily="Aileron"
+            fontFamily="Aileron, sans-serif"
             lineHeight={"16px"}
             textAlign="center"
           >

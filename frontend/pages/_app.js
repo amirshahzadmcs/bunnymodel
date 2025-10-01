@@ -1,7 +1,6 @@
 // pages/_app.js
 import { ChakraProvider } from '@chakra-ui/react'
 import LayoutWrapper from '../src/components/core/LayoutWrapper'
-import ScrollButton from '../src/components/core/ScrollButton'
 import "@fontsource/rajdhani"
 
 
@@ -13,8 +12,6 @@ function Marketplace({ Component, pageProps }) {
   return (
     <ChakraProvider resetCSS theme={mynewtheme}>
       <LayoutWrapper>
-        <ScrollButton/>
-      
         <Component {...pageProps} />
       </LayoutWrapper>
     </ChakraProvider>
