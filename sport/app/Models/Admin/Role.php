@@ -1,20 +1,26 @@
 <?php
 namespace App\Models\Admin;
 
-use Illuminate\Database\Eloquent\Model;
+use Spatie\Permission\Models\Role as SpatieRole;
 
-class Role extends Model
+class Role extends SpatieRole
 {
     protected $table = 'roles';
 
     protected $fillable = [
-        'role_id',
-        'admin_type',
-        'admin_id',
+        'name',
+        'slug',
+        'guard_name',
     ];
 
     public function admins()
     {
         return $this->belongsToMany(AdminModel::class, 'admin_has_roles', 'role_id', 'admin_id');
+    }
+
+    public function assignPermissions(array $permissionIds = [])
+    {
+        // This works because we extend SpatieRole
+        $this->syncPermissions($permissionIds);
     }
 }

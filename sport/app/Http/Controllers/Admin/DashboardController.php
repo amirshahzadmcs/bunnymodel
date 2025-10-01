@@ -10,7 +10,10 @@ use App\Models\Admin\PermissionsModel;
 
 class DashboardController extends Controller
 {
-    public function index(){
-        return view('admin.dashboard');
+    public function index()
+    {
+        // Get current admin user
+         $title = 'Dashboard';
+        return view('admin.dashboard', compact('title'));
     }
 }

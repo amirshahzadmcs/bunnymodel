@@ -3,11 +3,13 @@
 namespace App\Models\Admin;
 
 use Spatie\Permission\Models\Permission;
+use Illuminate\Support\Facades\DB;
 
 class PermissionsModel extends Permission
 {
     // Optional: explicitly define the table if different
-    protected $table = 'permissions';
+    protected $guard_name = 'admin'; // same guard as AdminModel
+    protected $table = 'permissions'; // make sure table exists
 
     protected $fillable = [
         'name',
@@ -18,13 +20,23 @@ class PermissionsModel extends Permission
     /**
      * Relationship with Admins
      */
+
     public function admins()
     {
         return $this->belongsToMany(
             AdminModel::class,
-            'admin_has_permissions', // pivot table
-            'permission_id',         // foreign key on pivot table for permission
-            'admin_id'               // foreign key on pivot table for admin
-        )->wherePivot('admin_type', AdminModel::class); // ensure only Admins
+            'admin_has_permissions',
+            'permission_id',
+            'admin_id'
+        )->withPivot('admin_type');
+    }
+
+    public static function removePermission($permissionId)
+    {
+
+        
+        DB::table('admin_has_permissions')->where('permission_id', $permissionId)->delete();
+        DB::table('role_has_permissions')->where('permission_id', $permissionId)->delete();
+        DB::table('permissions')->where('id', $permissionId)->delete();
     }
 }

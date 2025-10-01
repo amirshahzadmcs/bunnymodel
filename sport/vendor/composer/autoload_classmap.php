@@ -7,7 +7,8 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'App\\Http\\Controllers\\Admin\\AdminController' => $baseDir . '/app/Http/Controllers/Admin/AdminController.php',
-    'App\\Http\\Controllers\\Admin\\DashboarController' => $baseDir . '/app/Http/Controllers/Admin/DashboarController.php',
+    'App\\Http\\Controllers\\Admin\\DashboardController' => $baseDir . '/app/Http/Controllers/Admin/DashboardController.php',
+    'App\\Http\\Controllers\\Admin\\PermissionsController' => $baseDir . '/app/Http/Controllers/Admin/PermissionsController.php',
     'App\\Http\\Controllers\\Api\\BunnyModels\\BunnyModelController' => $baseDir . '/app/Http/Controllers/Api/BunnyModels/BunnyModelController.php',
     'App\\Http\\Controllers\\Api\\BunnyModels\\BunnyModelImagesController' => $baseDir . '/app/Http/Controllers/Api/BunnyModels/BunnyModelImagesController.php',
     'App\\Http\\Controllers\\Api\\BunnyModels\\BunnyPriceController' => $baseDir . '/app/Http/Controllers/Api/BunnyModels/BunnyPriceController.php',
