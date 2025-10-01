@@ -9,13 +9,13 @@ import {
   Button,
   Image,
   Img,
+  useToast,
 } from "@chakra-ui/react";
 import { AtSignIcon, LockIcon, ViewIcon } from "@chakra-ui/icons";
 import Head from "next/head";
-import { useState } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { useRouter } from "next/router";
 import axiosClient from "../../../utils/axiosClient";
-import { useToast } from "@chakra-ui/react";
 
 export default function Login() {
   const router = useRouter();
@@ -25,9 +25,11 @@ export default function Login() {
   const [errors, setErrors] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  // Memoize regex to prevent recreation on every render
+  const emailRegex = useMemo(() => /^[^\s@]+@[^\s@]+\.[^\s@]+$/, []);
 
-  const validate = () => {
+  // Optimize validation function with useCallback
+  const validate = useCallback(() => {
     const nextErrors = { email: "", password: "" };
     if (!emailRegex.test(email)) {
       nextErrors.email = "Wrong email";
@@ -37,8 +39,10 @@ export default function Login() {
     }
     setErrors(nextErrors);
     return !nextErrors.email && !nextErrors.password;
-  };
-  const onSubmit = async () => {
+  }, [email, password, emailRegex]);
+
+  // Optimize form submission with useCallback
+  const onSubmit = useCallback(async () => {
     if (!validate()) return;
 
     try {
@@ -88,22 +92,62 @@ export default function Login() {
         console.error("Error:", error.response.data);
       }
     }
-  };
+  }, [email, password, validate, toast, router]);
+
+  // Optimize input change handlers
+  const handleEmailChange = useCallback((e) => {
+    setEmail(e.target.value);
+    if (errors.email) setErrors(prev => ({ ...prev, email: "" }));
+  }, [errors.email]);
+
+  const handlePasswordChange = useCallback((e) => {
+    setPassword(e.target.value);
+    if (errors.password) setErrors(prev => ({ ...prev, password: "" }));
+  }, [errors.password]);
+
+  const togglePasswordVisibility = useCallback(() => {
+    setShowPassword(prev => !prev);
+  }, []);
+
+  // Memoize static styles to prevent recreation
+  const containerStyles = useMemo(() => ({
+    minH: "calc(100vh - 0px)",
+    align: "center",
+    justify: "center",
+    px: { base: 4, md: 8, lg: 10 },
+    py: { base: 6, md: 10, lg: 12 },
+    bg: "#0f0f0f",
+    fontFamily: "'Aileron"
+  }), []);
+
+  const logoBoxStyles = useMemo(() => ({
+    flex: { base: "none", lg: 1 },
+    bg: "#070707",
+    borderRadius: "12px",
+    boxShadow: "0 10px 28px rgba(0,0,0,0.45)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    minH: { base: "180px", md: "300px", lg: "800px" },
+    border: {
+      base: "6px solid #111111",
+      md: "8px solid #111111",
+      lg: "10px solid #111111",
+    }
+  }), []);
+
+  const formBoxStyles = useMemo(() => ({
+    flex: { base: "none", lg: 1 },
+    direction: "column",
+    justify: "center"
+  }), []);
 
   return (
     <>
       <Head>
         <title>Bunny Models — Login</title>
       </Head>
-      <Flex
-        minH="calc(100vh - 0px)"
-        align="center"
-        justify="center"
-        px={{ base: 4, md: 8, lg: 10 }}
-        py={{ base: 6, md: 10, lg: 12 }}
-        bg="#0f0f0f"
-        fontFamily="'Aileron"
-      >
+      <Flex {...containerStyles}>
         <Flex
           w={{ base: "100%", lg: "1200px" }}
           maxW="1200px"
@@ -111,21 +155,7 @@ export default function Login() {
           align="stretch"
           direction={{ base: "column", lg: "row" }}
         >
-          <Box
-            flex={{ base: "none", lg: 1 }}
-            bg="#070707"
-            borderRadius="12px"
-            boxShadow="0 10px 28px rgba(0,0,0,0.45)"
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
-            minH={{ base: "180px", md: "300px", lg: "800px" }}
-            border={{
-              base: "6px solid #111111",
-              md: "8px solid #111111",
-              lg: "10px solid #111111",
-            }}
-          >
+          <Box {...logoBoxStyles}>
             <Flex direction="column" align="center" gap={{ base: 2, md: 4 }}>
               <Image
                 src="/login-logo.svg"
@@ -135,11 +165,7 @@ export default function Login() {
             </Flex>
           </Box>
 
-          <Flex
-            flex={{ base: "none", lg: 1 }}
-            direction="column"
-            justify="center"
-          >
+          <Flex {...formBoxStyles}>
             <Box
               pb={"8px"}
               mb={"30px"}
@@ -192,14 +218,12 @@ export default function Login() {
                     boxShadow: "none",
                     bg: "transparent",
                   }}
+                  _placeholder={{ color: "#4D4D4D" }}
                   color="white"
                   fontFamily={"Aileron"}
                   bg="transparent"
                   value={email}
-                  onChange={(e) => {
-                    setEmail(e.target.value);
-                    if (errors.email) setErrors({ ...errors, email: "" });
-                  }}
+                  onChange={handleEmailChange}
                   onBlur={validate}
                 />
               </InputGroup>
@@ -237,13 +261,13 @@ export default function Login() {
                   right={{ base: "16px", md: "20px", lg: "24px" }}
                 >
                   <Box
-                    onClick={() => setShowPassword(!showPassword)}
+                    onClick={togglePasswordVisibility}
                     cursor="pointer"
                     role="button"
                     tabIndex={0}
                     onKeyDown={(e) => {
                       if (e.key === "Enter" || e.key === " ")
-                        setShowPassword(!showPassword);
+                        togglePasswordVisibility();
                     }}
                   >
                     <Img
@@ -259,16 +283,14 @@ export default function Login() {
                   placeholder="Enter Password"
                   border="none"
                   _focus={{ border: "none", boxShadow: "none" }}
+                  _placeholder={{ color: "#4D4D4D" }}
                   color="white"
                   fontFamily={"Aileron"}
                   pr={{ base: "48px", md: "64px", lg: "68px" }}
                   bg="transparent"
                   h={"auto"}
                   value={password}
-                  onChange={(e) => {
-                    setPassword(e.target.value);
-                    if (errors.password) setErrors({ ...errors, password: "" });
-                  }}
+                  onChange={handlePasswordChange}
                   onBlur={validate}
                 />
               </InputGroup>

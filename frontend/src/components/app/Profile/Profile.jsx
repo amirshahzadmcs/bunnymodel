@@ -50,6 +50,7 @@ export default function Profile() {
   const [model, setModel] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
   useEffect(() => {
     const fetchModel = async () => {
@@ -106,7 +107,7 @@ export default function Profile() {
 
   return (
     <Box  py={{ base: 6, md: "70px" }}>
-      <Container maxW="1320px" px={{ base: 4, md: 6 }}>
+      <Container maxW="1671.74px" px={{ base: 4, md: 6 }}>
         <Grid
           templateColumns={{ base: "1fr", lg: "2fr 1fr" }}
           gap={{ base: 6, md: 8 }}
@@ -114,22 +115,28 @@ export default function Profile() {
           {/* Left: Hero image + thumbnails */}
           <GridItem>
             <VStack spacing={4} align="stretch">
-              <Box>
-                <ApiImage
-                  src={model.images?.[0]?.image || "P1_01.jpg"}
-                  folder="P1"
-                  alt={`${model.firstname} ${model.lastname}`}
-                  className="w-full h-auto"
-                />
-              </Box>
+               <Box
+                
+               >
+                 <ApiImage
+                   src={model.images?.[selectedImageIndex]?.image || "P1_01.jpg"}
+                   folder="P1"
+                   alt={`${model.firstname} ${model.lastname}`}
+                   className="w-full h-full object-cover"
+                 />
+               </Box>
 
               <HStack spacing={4} overflowX="auto" py={2}>
                 {model.images?.map((image, idx) => (
                   <Box
                     key={idx}
                     minW={{ base: "22%", md: "18%" }}
-                    border="1px solid #2A2A2A"
+                    border={selectedImageIndex === idx ? "none" : "none"}
                     bg="#0E0E0E"
+                    cursor="pointer"
+                    transition="opacity 0.3s ease"
+                    _hover={{ opacity: 0.8 }}
+                    onClick={() => setSelectedImageIndex(idx)}
                   >
                     <ApiImage
                       src={image.image}

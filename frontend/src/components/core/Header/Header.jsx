@@ -22,7 +22,7 @@ import {
   Text,
   Image,
 } from "@chakra-ui/react";
-import { HamburgerIcon, UnlockIcon, AddIcon } from "@chakra-ui/icons";
+import { HamburgerIcon, UnlockIcon, AddIcon, CloseIcon } from "@chakra-ui/icons";
 import { FaUser } from "react-icons/fa";
 import Link from "next/link";
 
@@ -61,9 +61,10 @@ export default function Header() {
       position="sticky"
       top={0}
       width="100%"
-      backgroundColor={isScrolled ? "rgb(20 20 20 / 82%)" : "transparent"}
-      backdropFilter={isScrolled ? "saturate(180%) blur(10px)" : "none"}
-      boxShadow={"0px 0px 20px 0px #26262680"}
+      backgroundColor="rgb(0 0 0 / 50%)"
+      backdropFilter="blur(42px)"
+      boxShadow={isScrolled ? "1px 6px 38px 7px rgb(255 255 255 / 8%)" : "1px 4px 28px 5px rgb(255 255 255 / 3%)"}
+      borderBottom={isScrolled ? "1px solid #eeeeee2e" : "none"}
       zIndex={1000}
       transition="all 0.3s ease"
     >
@@ -71,10 +72,10 @@ export default function Header() {
       <Box height="1px" backgroundColor="#4a4a4a" width="100%" />
 
       <Flex
-        h={"77px"}
+        h={"72px"}
         alignItems="center"
         justifyContent="space-between"
-        maxW={"1350px"}
+        maxW={"1732.93px"}
         m={"auto"}
         px={4}
       >
@@ -82,25 +83,34 @@ export default function Header() {
         <Box display={{ base: "block", md: "none" }}>
           <IconButton
             aria-label="Menu"
-            icon={<HamburgerIcon w={"2em"} h={"2em"} />}
+            icon={
+              isOpen ? (
+                <CloseIcon w={"1.5em"} h={"1.5em"} />
+              ) : (
+                <Box>
+                  <Box w="20px" h="2px" bg="currentColor" mb="4px" />
+                  <Box w="20px" h="2px" bg="currentColor" />
+                </Box>
+              )
+            }
             color="#888888"
             bg="transparent"
             _hover={{ color: "#ccc", bg: "transparent" }}
-            onClick={onOpen}
+            onClick={isOpen ? onClose : onOpen}
           />
         </Box>
         <Box display={{ base: "none", md: "block" }}>
-          <Image src="/rabbit.png" alt="logo" />
+          <Image src="/rabbit.png" alt="logo" w={'30px'} h={'24px'}/>
         </Box>
 
         {/* Center: rabbit on mobile, wordmark on tablet/desktop */}
         <Box>
           <Image src="/rabbit.png" alt="logo" display={{ base: "block", md: "none" }} />
-          <Img src="/bunnymodel.png" alt="logo" display={{ base: "none", md: "block" }} />
+          <Img src="/bunny-models-logo-font.svg" alt="logo" display={{ base: "none", md: "block" }} />
         </Box>
 
         {/* Right Icons */}
-        <HStack spacing={4}>
+        <HStack spacing={'1rem'}>
           {/* User Icon with click-toggled auth dropdown */}
           <Box position="relative" ref={authMenuRef}>
             <Img
@@ -182,11 +192,20 @@ export default function Header() {
           <IconButton
             display={{ base: "none", md: "inline-flex" }}
             aria-label="Menu"
-            icon={<HamburgerIcon w={"2em"} h={"2em"} />}
+            icon={
+              isOpen ? (
+                <CloseIcon w={"1.5em"} h={"1.5em"} />
+              ) : (
+                <Box>
+                  <Box w="20px" h="2px" bg="currentColor" mb="4px" />
+                  <Box w="20px" h="2px" bg="currentColor" />
+                </Box>
+              )
+            }
             color="#888888"
             bg="transparent"
             _hover={{ color: "#ccc", bg: "transparent" }}
-            onClick={onOpen}
+            onClick={isOpen ? onClose : onOpen}
           />
         </HStack>
       </Flex>
@@ -194,48 +213,95 @@ export default function Header() {
       {/* Mobile Drawer */}
       <Drawer isOpen={isOpen} placement="right" onClose={onClose}>
         <DrawerOverlay />
-        <DrawerContent bg="#2a2a2a">
-          <DrawerCloseButton color="white" />
-          <DrawerHeader color="white">Menu</DrawerHeader>
-          <DrawerBody>
-            <Stack as="nav" spacing={4}>
+        <DrawerContent 
+          bg="black" 
+          border="1px solid rgba(255, 255, 255, 0.1)"
+          boxShadow="0 0 20px rgba(255, 255, 255, 0.1)"
+          borderRadius="8px"
+          maxW="300px"
+          mx="auto"
+          mt="20px"
+        >
+          
+          <DrawerBody p={6}>
+            <Stack as="nav" spacing={6}>
               <Button
                 bg="transparent"
                 colorScheme="transparent"
                 w="100%"
                 textAlign="left"
-                color="white"
+                color="#999999"
+                fontSize="16px"
+                fontWeight="400"
                 _hover={{ color: "#ccc", bg: "transparent" }}
+                py={2}
+                px={0}
+                h="auto"
+                justifyContent="flex-start"
               >
-                Home
+                Philosophy
               </Button>
               <Button
                 bg="transparent"
                 colorScheme="transparent"
                 w="100%"
                 textAlign="left"
-                color="white"
+                color="#999999"
+                fontSize="16px"
+                fontWeight="400"
                 _hover={{ color: "#ccc", bg: "transparent" }}
+                py={2}
+                px={0}
+                h="auto"
+                justifyContent="flex-start"
               >
-                About
+                Application
               </Button>
               <Button
                 bg="transparent"
                 colorScheme="transparent"
                 w="100%"
                 textAlign="left"
-                color="white"
+                color="#999999"
+                fontSize="16px"
+                fontWeight="400"
                 _hover={{ color: "#ccc", bg: "transparent" }}
+                py={2}
+                px={0}
+                h="auto"
+                justifyContent="flex-start"
               >
-                Services
+                Blog
               </Button>
               <Button
                 bg="transparent"
                 colorScheme="transparent"
                 w="100%"
                 textAlign="left"
-                color="white"
+                color="#999999"
+                fontSize="16px"
+                fontWeight="400"
                 _hover={{ color: "#ccc", bg: "transparent" }}
+                py={2}
+                px={0}
+                h="auto"
+                justifyContent="flex-start"
+              >
+                Faq
+              </Button>
+              <Button
+                bg="transparent"
+                colorScheme="transparent"
+                w="100%"
+                textAlign="left"
+                color="#999999"
+                fontSize="16px"
+                fontWeight="400"
+                _hover={{ color: "#ccc", bg: "transparent" }}
+                py={2}
+                px={0}
+                h="auto"
+                justifyContent="flex-start"
               >
                 Contact
               </Button>

@@ -215,6 +215,7 @@ export default function UserRegister() {
                     boxShadow: "none",
                     bg: "transparent",
                   }}
+                  _placeholder={{ color: "#4D4D4D" }}
                   color="white"
                   fontFamily={"Aileron"}
                   bg="transparent"
@@ -263,6 +264,7 @@ export default function UserRegister() {
                     boxShadow: "none",
                     bg: "transparent",
                   }}
+                  _placeholder={{ color: "#4D4D4D" }}
                   color="white"
                   fontFamily={"Aileron"}
                   bg="transparent"
@@ -330,6 +332,7 @@ export default function UserRegister() {
                   placeholder="Enter Password"
                   border="none"
                   _focus={{ border: "none", boxShadow: "none" }}
+                  _placeholder={{ color: "#4D4D4D" }}
                   color="white"
                   fontFamily={"Aileron"}
                   pr={{ base: "48px", md: "64px", lg: "68px" }}
@@ -376,6 +379,7 @@ export default function UserRegister() {
                   placeholder="Confirm Password"
                   border="none"
                   _focus={{ border: "none", boxShadow: "none" }}
+                  _placeholder={{ color: "#4D4D4D" }}
                   color="white"
                   fontFamily={"Aileron"}
                   pr={{ base: "16px", md: "16px", lg: "16px" }}
@@ -414,6 +418,7 @@ export default function UserRegister() {
               h={{ base: "56px", md: "64px", lg: "75px" }}
               _hover={{ bg: "#c7c7c7" }}
               onClick={onSubmit}
+              mt={'30px'}
             >
               Register
             </Button>

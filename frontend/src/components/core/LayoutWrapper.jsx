@@ -5,51 +5,64 @@ import Footer from "./Footer/Footer";
 import Header from "./Header/Header";
 
 const MIN_LOADER_MS = 2500; // minimum time the loader should be visible
-const FADE_MS = 500;        // fade-out duration
+const FADE_MS = 500; // fade-out duration
 
 const LayoutWrapper = ({ children }) => {
-  const [showLoader, setShowLoader] = useState(true);
+  const [showLoader, setShowLoader] = useState(false);
   const loaderRef = useRef(null);
   const startTimeRef = useRef(Date.now());
   const router = useRouter();
 
   useEffect(() => {
-    const hideWithMinimumDelay = () => {
-      const elapsed = Date.now() - startTimeRef.current;
-      const remaining = Math.max(0, MIN_LOADER_MS - elapsed);
+    // Check if this is the very first visit to the site
+    const hasVisitedBefore = localStorage.getItem('bunnymodel_first_visit');
+    
+    // Only show loader on first visit to any page
+    if (!hasVisitedBefore) {
+      setShowLoader(true);
+      startTimeRef.current = Date.now();
+      
+      const hideWithMinimumDelay = () => {
+        const elapsed = Date.now() - startTimeRef.current;
+        const remaining = Math.max(0, MIN_LOADER_MS - elapsed);
 
-      const doFade = () => {
-        const el = loaderRef.current;
-        if (!el) {
-          setShowLoader(false);
-          return;
+        const doFade = () => {
+          const el = loaderRef.current;
+          if (!el) {
+            setShowLoader(false);
+            return;
+          }
+          el.style.transition = `opacity ${FADE_MS}ms ease`;
+          el.style.opacity = "0";
+          setTimeout(() => {
+            setShowLoader(false);
+            // Mark as visited after loader completes
+            localStorage.setItem('bunnymodel_first_visit', 'true');
+          }, FADE_MS);
+        };
+
+        if (remaining > 0) {
+          const t = setTimeout(doFade, remaining);
+          return () => clearTimeout(t);
+        } else {
+          doFade();
         }
-        el.style.transition = `opacity ${FADE_MS}ms ease`;
-        el.style.opacity = "0";
-        setTimeout(() => setShowLoader(false), FADE_MS);
       };
 
-      if (remaining > 0) {
-        const t = setTimeout(doFade, remaining);
-        return () => clearTimeout(t);
+      // If already loaded, still enforce minimum time
+      if (document.readyState === "complete") {
+        const cleanup = hideWithMinimumDelay();
+        return cleanup;
       } else {
-        doFade();
+        const onLoad = () => hideWithMinimumDelay();
+        window.addEventListener("load", onLoad);
+        return () => window.removeEventListener("load", onLoad);
       }
-    };
-
-    // If already loaded, still enforce minimum time
-    if (document.readyState === "complete") {
-      const cleanup = hideWithMinimumDelay();
-      return cleanup;
-    } else {
-      const onLoad = () => hideWithMinimumDelay();
-      window.addEventListener("load", onLoad);
-      return () => window.removeEventListener("load", onLoad);
     }
   }, []);
 
   return (
-    <Box bg={'black'} minH={'100vh'}>
+    <Box bg={"black"} minH={"100vh"}>
       {showLoader && (
         <Box
           id="loading"
@@ -68,19 +81,27 @@ const LayoutWrapper = ({ children }) => {
           <Image
             src="/loading-logo-anim.gif"
             alt="loading"
-            w={'80px'}
-            h={'80px'}
+            w={"80px"}
+            h={"80px"}
             sx={{
-              imageRendering: 'pixelated',
-              WebkitImageSmoothing: 'pixelated',
+              imageRendering: "pixelated",
+              WebkitImageSmoothing: "pixelated",
             }}
           />
         </Box>
       )}
 
-      {router?.pathname?.startsWith('/Login') || router?.pathname?.startsWith('/Register') ? null : <Header/>}
+      {router?.pathname?.startsWith("/Login") ||
+      router?.pathname?.startsWith("/login") ||
+      router?.pathname?.startsWith("/Register") ? null : (
+        <Header />
+      )}
       {children}
-      {router?.pathname?.startsWith('/Login') || router?.pathname?.startsWith('/Register') ? null : <Footer/>}
+      {router?.pathname?.startsWith("/Login") ||
+      router?.pathname?.startsWith("/login") ||
+      router?.pathname?.startsWith("/Register") ? null : (
+        <Footer />
+      )}
     </Box>
   );
 };

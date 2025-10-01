@@ -9,9 +9,10 @@ import {
   Center,
   VStack,
   useBreakpointValue,
+  useMediaQuery,
   Img,
 } from "@chakra-ui/react";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useRouter } from "next/router";
 import axiosClient from "../../../utils/axiosClient";
 import ApiImage from "../Apiimage/ApiImage";
@@ -23,29 +24,60 @@ const LOAD_DELAY_MS = 2400;
 const folderSequence = Array.from({ length: 24 }, (_, i) => `P${i + 1}`);
 const imagesPerFolder = 5;
 
-// Generate models in the specified sequence
+// Memoize static data to prevent recreation
+const cities = [
+  "Paris",
+  "Zurich",
+  "Boston",
+  "London",
+  "Geneva",
+  "Frankfurt",
+  "Basel",
+  "Milan",
+];
+
+const names = [
+  "Olivia",
+  "Carmen",
+  "Daniela",
+  "Evana",
+  "Maggie",
+  "Suzen",
+  "Lione",
+  "Victoria",
+  "Sofia",
+  "Emma",
+  "Luna",
+  "Aria",
+  "Maya",
+  "Zoe",
+  "Nora",
+  "Iris",
+  "Eva",
+  "Lily",
+  "Chloe",
+  "Grace",
+];
+
+// Generate models in the specified sequence - memoized
 const generateModels = () => {
-  // fetch models from api
-  
   const models = [];
-  const cities = ["Paris", "Zurich", "Boston", "London", "Geneva", "Frankfurt", "Basel", "Milan"];
-  const names = ["Olivia", "Carmen", "Daniela", "Evana", "Maggie", "Suzen", "Lione", "Victoria", "Sofia", "Emma", "Luna", "Aria", "Maya", "Zoe", "Nora", "Iris", "Eva", "Lily", "Chloe", "Grace"];
-  
+
   folderSequence.forEach((folder, folderIndex) => {
     for (let i = 1; i <= imagesPerFolder; i++) {
-      const imageNumber = i.toString().padStart(2, '0');
+      const imageNumber = i.toString().padStart(2, "0");
       const modelIndex = folderIndex * imagesPerFolder + i - 1;
-      
+
       models.push({
         name: names[modelIndex % names.length],
         city: cities[modelIndex % cities.length],
         image: `/${folder}/${folder}_${imageNumber}.jpg`,
         folder: folder,
-        row: folderIndex + 1
+        row: folderIndex + 1,
       });
     }
   });
-  
+
   return models;
 };
 
@@ -129,7 +161,6 @@ const LazyImage = ({ src, alt, ...props }) => {
         </Box>
       )}
     </Box>
-
   );
 };
 
@@ -165,27 +196,42 @@ const MobileSlider = ({ items }) => {
       >
         {items.map((model, i) => (
           <Box key={i} minW="100%" scrollSnapAlign="center" px={0}>
-            <Box 
-              position="relative" 
-              width="100%" 
-              mb={4} 
+            <Box
+              position="relative"
+              width="100%"
+              mb={4}
               overflow="hidden"
               cursor="pointer"
             >
               <ApiImage
                 src={model.images?.[0]?.image || "P1_01.jpg"}
-                folder="P1"
                 alt={`${model.firstname} ${model.lastname}`}
                 className="w-full h-auto object-cover"
                 onClick={() => handleModelClick(model)}
+                showHoverEffect={true}
               />
             </Box>
+            {/* Segmented indicator */}
+            <Box mt={3} px={1} display="flex" gap={2}>
+              {items.map((_, i) => (
+                <Box
+                  key={i}
+                  flex="1"
+                  height="2px"
+                  bg={i === index ? "#cfcfcf" : "#2e2e2e"}
+                  borderRadius="2px"
+                  transition="background-color 200ms ease"
+                />
+              ))}
+            </Box>
+            
             <Box
               display="flex"
               justifyContent="space-between"
               alignItems="center"
               color="white"
               px={1}
+              mt={3}
             >
               <Text
                 fontSize="16px"
@@ -202,26 +248,85 @@ const MobileSlider = ({ items }) => {
                 fontFamily="Inter"
                 color="#999999"
               >
-                {model.age} years
+                {model.city} 
               </Text>
+            </Box>
+          </Box>
+        ))}
+      </Box>
+    </Box>
+  );
+};
+
+// Tablet slider component for individual model images
+const TabletSlider = ({ model, onModelClick }) => {
+  const containerRef = useRef(null);
+  const [index, setIndex] = useState(0);
+  
+  // Get all images for this model (assuming model.images is an array)
+  const modelImages = model.images || [];
+  
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const onScroll = () => {
+      const w = el.clientWidth;
+      const i = Math.round(el.scrollLeft / Math.max(1, w));
+      setIndex(Math.min(modelImages.length - 1, Math.max(0, i)));
+    };
+    el.addEventListener("scroll", onScroll, { passive: true });
+    return () => el.removeEventListener("scroll", onScroll);
+  }, [modelImages.length]);
+
+  return (
+    <Box>
+      <Box
+        ref={containerRef}
+        display="flex"
+        overflowX="auto"
+        scrollSnapType="x mandatory"
+        sx={{
+          scrollbarWidth: "none",
+          msOverflowStyle: "none",
+          "&::-webkit-scrollbar": { display: "none" },
+        }}
+      >
+        {modelImages.map((imageData, i) => (
+          <Box key={i} minW="100%" scrollSnapAlign="center" px={0}>
+            <Box
+              position="relative"
+              width="100%"
+              mb={4}
+              overflow="hidden"
+              cursor="pointer"
+            >
+              <ApiImage
+                src={imageData?.image || "P1_01.jpg"}
+                alt={`${model.firstname} ${model.lastname}`}
+                className="w-full h-auto object-cover"
+                onClick={() => onModelClick(model)}
+                showHoverEffect={true}
+              />
             </Box>
           </Box>
         ))}
       </Box>
 
       {/* Segmented indicator */}
-      <Box mt={3} px={1} display="flex" gap={2}>
-        {items.map((_, i) => (
-          <Box
-            key={i}
-            flex="1"
-            height="2px"
-            bg={i === index ? "#cfcfcf" : "#2e2e2e"}
-            borderRadius="2px"
-            transition="background-color 200ms ease"
-          />
-        ))}
-      </Box>
+      {modelImages.length > 1 && (
+        <Box mt={'auto'} px={1} display="flex" gap={2} w={'151px'}>
+          {modelImages.map((_, i) => (
+            <Box
+              key={i}
+              flex="1"
+              height="2px"
+              bg={i === index ? "#cfcfcf" : "#2e2e2e"}
+              borderRadius="2px"
+              transition="background-color 200ms ease"
+            />
+          ))}
+        </Box>
+      )}
     </Box>
   );
 };
@@ -237,19 +342,28 @@ export default function ModelGallery() {
   const [limit, setLimit] = useState(10);
   const [hasMore, setHasMore] = useState(true);
   const sentinelRef = useRef(null);
-  const isMobile = useBreakpointValue({ base: true, md: false });
+  const [isBelow1536px] = useMediaQuery('(max-width: 1535px)');
+  const [isMobileDevice] = useMediaQuery('(max-width: 575px)');
+  const [isTabletDevice] = useMediaQuery('(min-width: 576px) and (max-width: 991px)');
+  
+  // Show mobile slider only on actual mobile devices (below 576px)
+  const shouldShowMobileSlider = isMobileDevice;
+  // Show tablet slider on tablet devices (576px-991px)
+  const shouldShowTabletSlider = isTabletDevice;
   const [mobileSlides, setMobileSlides] = useState(null);
 
   useEffect(() => {
     const fetchModels = async () => {
       try {
-        const response = await axiosClient.get(`/models?limit=${limit}&page=${currentPage}`);
+        const response = await axiosClient.get(
+          `/models?limit=${limit}&page=${currentPage}`
+        );
         if (response.data.status === "success") {
           if (currentPage === 1) {
             setModals(response.data.models);
             setHasMore(response.data.models.length === limit);
           } else {
-            setModals(prev => [...prev, ...response.data.models]);
+            setModals((prev) => [...prev, ...response.data.models]);
             setHasMore(response.data.models.length === limit);
           }
         } else {
@@ -276,9 +390,13 @@ export default function ModelGallery() {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting && hasMore && !isLoading) {
-          console.log('Scroll detected, loading next page...', { currentPage, hasMore, isLoading });
+          console.log("Scroll detected, loading next page...", {
+            currentPage,
+            hasMore,
+            isLoading,
+          });
           setIsLoading(true);
-          setCurrentPage(prev => prev + 1);
+          setCurrentPage((prev) => prev + 1);
         }
       },
       { rootMargin: "100px" }
@@ -290,16 +408,16 @@ export default function ModelGallery() {
 
   // Prepare mobile slider groups client-side to avoid SSR hydration mismatch
   useEffect(() => {
-    if (isMobile) {
+    if (shouldShowMobileSlider) {
       // Take first 8 items and split into two groups of 4 for mobile sliders
       const first = items.slice(0, 4);
       const second = items.slice(4, 8);
-      
+
       setMobileSlides([first, second]);
     } else {
       setMobileSlides(null);
     }
-  }, [isMobile, items]);
+  }, [shouldShowMobileSlider, items]);
 
   const handleModelClick = (model) => {
     router.push(`/Profile?username=${model.username}`);
@@ -309,38 +427,38 @@ export default function ModelGallery() {
   if (error) return <p style={{ color: "red" }}>{error}</p>;
 
   return (
-    <Box bg="black" minH="100vh" pb={20}>
-      <Container maxW="1600px" px={4}>
+    <Box bg="black" minH="100vh" >
+      <Container maxW="1732.93px" px={{base:'36px',md:'16px',}}>
         {/* Title */}
-        <Heading
-          as="h1"
-          fontSize="12x"
-          lineHeight={"9px"}
-          fontWeight="400"
-          color=" #808080;
-"
-          textAlign="center"
-          fontFamily="Aileron"
-          pb={"16px"}
+        <Box
           mb={"30px"}
-          position="relative"
-          _after={{
-            content: '""',
-            position: "absolute",
-            bottom: "0",
-            left: "0",
-            right: "0",
-            height: "1px",
-            background:
-              "linear-gradient(90deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.5) 0%, rgba(153, 153, 153, 0.5) 49.04%, rgba(0, 0, 0, 0.5) 99.99%)",
-            filter: "blur(0.5px)",
+          borderBottom="1px solid transparent"
+          sx={{
+            borderImageSource:
+              "linear-gradient(90deg, #ffffff00, rgb(248 248 248 / 58%) 50%, #ffffff00)",
+            borderImageSlice: 1,
+            borderImageWidth: 1,
+            borderImageOutset: 0,
+            borderImageRepeat: "stretch",
           }}
         >
-          Model Gallery
-        </Heading>
+          <Heading
+            as="h1"
+            fontSize="24px"
+            lineHeight={"30px"}
+            fontWeight="400"
+            color=" #808080;"
+            fontFamily="Aileron"
+            textAlign={'center'}
+            mb={"10px"}
+            position="relative"
+          >
+            Model Gallery
+          </Heading>
+        </Box>
 
-        {/* Mobile: two stacked sliders showing P1 and P2 images */}
-        {isMobile ? (
+        {/* Mobile: two stacked sliders showing P1 and P2 images - only on actual mobile devices */}
+        {shouldShowMobileSlider ? (
           <Box>
             <MobileSlider
               items={(mobileSlides && mobileSlides[0]) || items.slice(0, 4)}
@@ -350,35 +468,75 @@ export default function ModelGallery() {
               items={(mobileSlides && mobileSlides[1]) || items.slice(4, 8)}
             />
           </Box>
+        ) : shouldShowTabletSlider ? (
+          <Grid
+            templateColumns={{
+              base: "repeat(2, 1fr)",
+              sm: "repeat(2, 1fr)",
+              md: "repeat(3, 1fr)",
+            }}
+            gap={8}
+            maxW="1671.74px"
+            mx="auto"
+          >
+            {items.map((model, index) => (
+              <Box key={index} position="relative" cursor="pointer">
+                <TabletSlider
+                  model={model}
+                  onModelClick={handleModelClick}
+                />
+                <Box
+                  display="flex"
+                  justifyContent="space-between"
+                  alignItems="center"
+                  color="white"
+                  mt={4}
+                >
+                  <Text
+                    fontSize="24px"
+                    fontWeight="400"
+                    fontFamily="Aileron"
+                    lineHeight={"20px"}
+                  >
+                    {model.firstname} {model.lastname}
+                  </Text>
+                  <Text
+                    fontSize="15px"
+                    fontWeight="400"
+                    lineHeight={"16px"}
+                    fontFamily="Aileron"
+                    color="#999999"
+                  >
+                    {model.city}
+                  </Text>
+                </Box>
+              </Box>
+            ))}
+          </Grid>
         ) : (
           <Grid
             templateColumns={{
               base: "repeat(2, 1fr)",
+              sm: "repeat(2, 1fr)",
               md: "repeat(3, 1fr)",
               lg: "repeat(4, 1fr)",
               xl: "repeat(4, 1fr)",
               "2xl": "repeat(4, 1fr)",
             }}
             gap={8}
-            maxW="1600px"
+            maxW="1671.74px"
             mx="auto"
           >
             {items.map((model, index) => (
               <Box key={index} position="relative" cursor="pointer">
-                <Box 
-                  position="relative" 
-                  width="100%" 
-                  mb={4} 
-                  overflow="hidden"
-                >
+                <Box position="relative" width="100%" mb={4} overflow="hidden">
                   <ApiImage
                     src={model.images?.[0]?.image || "P1_01.jpg"}
-                   
                     alt={`${model.firstname} ${model.lastname}`}
                     className="w-full h-auto object-cover"
                     onClick={() => handleModelClick(model)}
+                    showHoverEffect={true}
                   />
-                  
                 </Box>
                 <Box
                   display="flex"
@@ -387,21 +545,21 @@ export default function ModelGallery() {
                   color="white"
                 >
                   <Text
-                    fontSize="16px"
+                    fontSize="18px"
                     fontWeight="400"
-                    fontFamily="Inter"
+                    fontFamily="Aileron"
                     lineHeight={"20px"}
                   >
                     {model.firstname} {model.lastname}
                   </Text>
                   <Text
-                    fontSize="14px"
+                    fontSize="15px"
                     fontWeight="400"
                     lineHeight={"16px"}
-                    fontFamily="Inter"
+                    fontFamily="Aileron"
                     color="#999999"
                   >
-                    {model.city} 
+                    {model.city}
                   </Text>
                 </Box>
               </Box>
@@ -429,9 +587,9 @@ export default function ModelGallery() {
           )}
           {!hasMore && (
             <Center>
-              <Text color="gray.400" fontSize="14px">
+              {/* <Text color="gray.400" fontSize="14px">
                 No more models to load
-              </Text>
+              </Text> */}
             </Center>
           )}
         </Box>
