@@ -6,19 +6,22 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Models\Admin\PermissionsModel;
+use Spatie\Permission\Traits\HasRoles; // <-- Add thi
 
 class AdminModel extends Authenticatable
 {
+    use Notifiable, HasRoles; // <-- Use the trait here
 
-    protected $table = 'admins'; // explicitly defining table name
-
-    protected $guard = 'admin';
     protected $guard_name = 'admin';
+    protected $table = 'admins';
+
+    // override Spatie defaults
 
     protected $fillable = [
         'name',
         'email',
         'password',
+        'status',
     ];
 
     protected $hidden = [
@@ -99,19 +102,19 @@ class AdminModel extends Authenticatable
         $this->roles()->detach();
     }
 
-    public function hasPermission($permissions)
-    {
-        return $this->permissions()->whereIn('slug', (array) $permissions)->exists();
-    }
-
     public function permissions()
     {
         return $this->belongsToMany(
             PermissionsModel::class,
-            'admin_has_permissions', // or 'model_has_permissions' if following Spatie
-            'admin_id',               // foreign key on pivot for admin
-            'permission_id'           // foreign key on pivot for permission
-        )->withPivot('admin_type');   // matches your pivot structure
+            'admin_has_permissions', 
+            'admin_id', 
+            'permission_id' 
+        )->withPivot('admin_type'); 
+    }
+
+    public function hasPermission($permissions): bool
+    {
+        return $this->permissions()->whereIn('name', (array) $permissions)->exists();
     }
 
 }

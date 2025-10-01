@@ -46,6 +46,7 @@ class ComposerStaticInit9d924bc09955033a56fa02ced4375c56
         'ce9671a430e4846b44e1c68c7611f9f5' => __DIR__ . '/..' . '/mockery/mockery/library/Mockery.php',
         'd634523d799d97a8ab4807b650bf5cea' => __DIR__ . '/..' . '/pestphp/pest-plugin-laravel/src/Autoload.php',
         '377b22b161c09ed6e5152de788ca020a' => __DIR__ . '/..' . '/spatie/laravel-permission/src/helpers.php',
+        'd21d43db5f6e840ee7b10744ec7fdf66' => __DIR__ . '/../..' . '/app/Helpers/helpers.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -216,9 +217,9 @@ class ComposerStaticInit9d924bc09955033a56fa02ced4375c56
         ),
         'phpDocumentor\\Reflection\\' => 
         array (
-            0 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
-            1 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
-            2 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
+            0 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
+            1 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
+            2 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
         ),
         'Whoops\\' => 
         array (
@@ -627,7 +628,8 @@ class ComposerStaticInit9d924bc09955033a56fa02ced4375c56
 
     public static $classMap = array (
         'App\\Http\\Controllers\\Admin\\AdminController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/AdminController.php',
-        'App\\Http\\Controllers\\Admin\\DashboarController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/DashboarController.php',
+        'App\\Http\\Controllers\\Admin\\DashboardController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/DashboardController.php',
+        'App\\Http\\Controllers\\Admin\\PermissionsController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/PermissionsController.php',
         'App\\Http\\Controllers\\Api\\BunnyModels\\BunnyModelController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/BunnyModels/BunnyModelController.php',
         'App\\Http\\Controllers\\Api\\BunnyModels\\BunnyModelImagesController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/BunnyModels/BunnyModelImagesController.php',
         'App\\Http\\Controllers\\Api\\BunnyModels\\BunnyPriceController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/BunnyModels/BunnyPriceController.php',
