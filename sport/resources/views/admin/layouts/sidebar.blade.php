@@ -205,11 +205,11 @@
 
           <div class="nav-item-wrapper">
               <a class="nav-link dropdown-indicator label-1 {{ in_array(Route::currentRouteName(), $pageRoutes) ? 'active' : '' }}" 
-                href="#page-managements" 
+                href="#members-managements" 
                 role="button" 
                 data-bs-toggle="collapse" 
                 aria-expanded="{{ in_array(Route::currentRouteName(), $pageRoutes) ? 'true' : 'false' }}" 
-                aria-controls="page-managements">
+                aria-controls="members-managements">
                   <div class="d-flex align-items-center">
                       <div class="dropdown-indicator-icon-wrapper">
                           <span class="fas fa-caret-right dropdown-indicator-icon"></span>
@@ -224,7 +224,7 @@
               <div class="parent-wrapper label-1">
                   <ul class="nav collapse parent {{ in_array(Route::currentRouteName(), $pageRoutes) ? 'show' : '' }}" 
                       data-bs-parent="#navbarVerticalCollapse" 
-                      id="page-managements">
+                      id="members-managements">
                       <li class="collapsed-nav-item-title d-none">Members</li>
 
                       <li class="nav-item">
