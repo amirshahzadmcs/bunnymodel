@@ -56,9 +56,15 @@ class RoleController extends Controller
     public function edit(Role $role)
     {
         $title = 'Edit Role';
-        return view('admin.roles.update', compact('role', 'title'));
-    }
 
+        // Get all permissions
+        $permissions = PermissionsModel::all();
+
+        // Get IDs/names of permissions assigned to this role
+        $rolePermissions = $role->permissions->pluck('name')->toArray();
+
+        return view('admin.roles.update', compact('role', 'title', 'permissions', 'rolePermissions'));
+    }
     /**
      * Update the specified role in storage.
      */

@@ -149,20 +149,96 @@
                 </div>
             </div>
 
+          @php
+              $pageRoutes = ['admin.pages.create', 'admin.pages.index'];
+          @endphp
 
           <div class="nav-item-wrapper">
-            <a class="nav-link label-1" href="members.html" role="button" data-bs-toggle="" aria-expanded="false">
-              <div class="d-flex align-items-center">
-                <span class="nav-link-icon">
-                  <span data-feather="users"></span>
-                </span>
-                <span class="nav-link-text-wrapper">
-                  <span class="nav-link-text">Members</span>
-                </span>
+              <a class="nav-link dropdown-indicator label-1 {{ in_array(Route::currentRouteName(), $pageRoutes) ? 'active' : '' }}" 
+                href="#page-managements" 
+                role="button" 
+                data-bs-toggle="collapse" 
+                aria-expanded="{{ in_array(Route::currentRouteName(), $pageRoutes) ? 'true' : 'false' }}" 
+                aria-controls="page-managements">
+                  <div class="d-flex align-items-center">
+                      <div class="dropdown-indicator-icon-wrapper">
+                          <span class="fas fa-caret-right dropdown-indicator-icon"></span>
+                      </div>
+                      <span class="nav-link-icon">
+                          <span data-feather="file-text"></span>
+                      </span>
+                      <span class="nav-link-text">Pages</span>
+                  </div>
+              </a>
+
+              <div class="parent-wrapper label-1">
+                  <ul class="nav collapse parent {{ in_array(Route::currentRouteName(), $pageRoutes) ? 'show' : '' }}" 
+                      data-bs-parent="#navbarVerticalCollapse" 
+                      id="page-managements">
+                      <li class="collapsed-nav-item-title d-none">Pages</li>
+
+                      <li class="nav-item">
+                          <a class="nav-link {{ Route::currentRouteName() == 'admin.pages.create' ? 'active' : '' }}" 
+                            href="{{ route('admin.pages.create') }}">
+                              <div class="d-flex align-items-center">
+                                  <span class="nav-link-text">Create Page</span>
+                              </div>
+                          </a>
+                      </li>
+
+                      <li class="nav-item">
+                          <a class="nav-link {{ Route::currentRouteName() == 'admin.pages.index' ? 'active' : '' }}" 
+                            href="{{ route('admin.pages.index') }}">
+                              <div class="d-flex align-items-center">
+                                  <span class="nav-link-text">Page List</span>
+                              </div>
+                          </a>
+                      </li>
+
+                  </ul>
               </div>
-            </a>
           </div>
-          <!-- parent pages -->
+
+          @php
+              $pageRoutes = ['admin.members.index'];
+          @endphp
+
+          <div class="nav-item-wrapper">
+              <a class="nav-link dropdown-indicator label-1 {{ in_array(Route::currentRouteName(), $pageRoutes) ? 'active' : '' }}" 
+                href="#page-managements" 
+                role="button" 
+                data-bs-toggle="collapse" 
+                aria-expanded="{{ in_array(Route::currentRouteName(), $pageRoutes) ? 'true' : 'false' }}" 
+                aria-controls="page-managements">
+                  <div class="d-flex align-items-center">
+                      <div class="dropdown-indicator-icon-wrapper">
+                          <span class="fas fa-caret-right dropdown-indicator-icon"></span>
+                      </div>
+                      <span class="nav-link-icon">
+                          <span data-feather="file-text"></span>
+                      </span>
+                      <span class="nav-link-text">Members</span>
+                  </div>
+              </a>
+
+              <div class="parent-wrapper label-1">
+                  <ul class="nav collapse parent {{ in_array(Route::currentRouteName(), $pageRoutes) ? 'show' : '' }}" 
+                      data-bs-parent="#navbarVerticalCollapse" 
+                      id="page-managements">
+                      <li class="collapsed-nav-item-title d-none">Members</li>
+
+                      <li class="nav-item">
+                          <a class="nav-link {{ Route::currentRouteName() == 'admin.members.index' ? 'active' : '' }}" 
+                            href="{{ route('admin.members.index') }}">
+                              <div class="d-flex align-items-center">
+                                  <span class="nav-link-text">Members List</span>
+                              </div>
+                          </a>
+                      </li>
+
+                  </ul>
+              </div>
+          </div>
 
           <div class="nav-item-wrapper">
             <a class="nav-link label-1" href="notifications.html" role="button" data-bs-toggle="" aria-expanded="false">
@@ -177,64 +253,6 @@
             </a>
           </div>
           <!-- parent pages -->
-
-          <div class="nav-item-wrapper">
-            <a class="nav-link dropdown-indicator label-1" href="#nv-projectManagement" role="button" data-bs-toggle="collapse" aria-expanded="false" aria-controls="nv-projectManagement">
-              <div class="d-flex align-items-center">
-                <div class="dropdown-indicator-icon-wrapper">
-                  <span class="fas fa-caret-right dropdown-indicator-icon"></span>
-                </div>
-                <span class="nav-link-icon">
-                  <span data-feather="layout"></span>
-                </span>
-                <span class="nav-link-text">Project management</span>
-              </div>
-            </a>
-
-            <div class="parent-wrapper label-1">
-              <ul class="nav collapse parent" data-bs-parent="#navbarVerticalCollapse" id="nv-projectManagement">
-                <li class="collapsed-nav-item-title d-none">Project management</li>
-
-                <li class="nav-item">
-                  <a class="nav-link" href="#.">
-                    <div class="d-flex align-items-center">
-                      <span class="nav-link-text">Create new</span>
-                    </div>
-                  </a>
-                  <!-- more inner pages -->
-                </li>
-
-                <li class="nav-item">
-                  <a class="nav-link" href="#.">
-                    <div class="d-flex align-items-center">
-                      <span class="nav-link-text">Project list view</span>
-                    </div>
-                  </a>
-                  <!-- more inner pages -->
-                </li>
-
-                <li class="nav-item">
-                  <a class="nav-link" href="#.">
-                    <div class="d-flex align-items-center">
-                      <span class="nav-link-text">Project card view</span>
-                    </div>
-                  </a>
-                  <!-- more inner pages -->
-                </li>
-
-                <li class="nav-item">
-                  <a class="nav-link" href="#.">
-                    <div class="d-flex align-items-center">
-                      <span class="nav-link-text">Project board view</span>
-                    </div>
-                  </a>
-                  <!-- more inner pages -->
-                </li>
-
-              </ul>
-            </div>
-          </div>
-
         </li>
       </ul>
     </div>

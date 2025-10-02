@@ -20,6 +20,8 @@ class Member extends Authenticatable
         'username',
         'email',
         'password',
+        'profile_status',
+        'email_status'
     ];
 
     // Hidden fields when converting to array or JSON

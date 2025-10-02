@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\BunnyModels\BunnyModelController;
 use App\Http\Controllers\Api\Members\MembersController;
+use App\Http\Controllers\Api\Page\PageController;
 
 
 Route::fallback(function () {
@@ -26,8 +27,9 @@ Route::post('member/login', [MembersController::class, 'login']);
 Route::post('member/forgot-password', [MembersController::class, 'sendOtp']);
 Route::post('member/verify-otp', [MembersController::class, 'verifyOtp']);
 Route::post('member/reset-password', [MembersController::class, 'resetPasswordWithOtp']);
-
 Route::get('member/verify-email/{token}', [MembersController::class, 'verifyEmail']);
+
+Route::get('page/{slug}', [PageController::class, 'showBySlug']);
 
 // Check if the currently authenticated member is logged in
 // - Protected route: requires authentication via 'checkApiAuth' middleware

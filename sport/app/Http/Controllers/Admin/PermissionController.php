@@ -50,7 +50,7 @@ class PermissionController extends Controller
      */
     public function edit(PermissionsModel $permission)
     {
-        return view('admin.permissions.edit', compact('permission'));
+        return view('admin.permissions.update', compact('permission'));
     }
 
     /**
