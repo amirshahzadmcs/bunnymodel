@@ -1,4 +1,6 @@
     @include('admin.layouts.header')
+
+
 	<div class="content">
       <nav class="mb-3" aria-label="breadcrumb">
         <ol class="breadcrumb mb-0">
@@ -45,6 +47,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             @endif
+           
         <div class="mb-9 bg-body-emphasis border mt-2 position-relative top-1">
           <div class="table-responsive scrollbar ms-n1 ps-1">
             <table class="table table-sm fs-9 mb-0">
@@ -59,13 +62,14 @@
                 </tr>
               </thead>
               <tbody class="list" id="members-table-body">
+                   
                @foreach($members as $member)
+               
                     <tr class="hover-actions-trigger btn-reveal-trigger position-static">
                         <!-- Member Name -->
                         <td class="email align-middle white-space-nowrap">
                             {{ $member->full_name }}
                         </td>
-
                         <!-- Email -->
                         <td class="email align-middle white-space-nowrap">
                             <a class="fw-semibold" href="mailto:{{ $member->email }}">{{ $member->email }}</a>
@@ -145,4 +149,5 @@
 			</div>
 		</div>
 	</div>
+   
 	@include('admin.layouts.footer')

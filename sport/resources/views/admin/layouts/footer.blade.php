@@ -9,16 +9,16 @@
 
   </main>
   
-<script src="{{ asset('admin/vendors/popper/popper.min.js') }}"></script>
-<script src="{{ asset('admin/vendors/bootstrap/bootstrap.min.js') }}"></script>
-<script src="{{ asset('admin/vendors/anchorjs/anchor.min.js') }}"></script>
-<script src="{{ asset('admin/vendors/is/is.min.js') }}"></script>
-<script src="{{ asset('admin/vendors/fontawesome/all.min.js') }}"></script>
-<script src="{{ asset('admin/vendors/lodash/lodash.min.js') }}"></script>
-<script src="{{ asset('admin/vendors/list.js/list.min.js') }}"></script>
-<script src="{{ asset('admin/vendors/feather-icons/feather.min.js') }}"></script>
-<script src="{{ asset('admin/vendors/dayjs/dayjs.min.js') }}"></script>
-<script src="{{ asset('admin/assets/js/phoenix.js') }}"></script>
+<script src="{{ asset('public/admin/vendors/popper/popper.min.js') }}"></script>
+<script src="{{ asset('public/admin/vendors/bootstrap/bootstrap.min.js') }}"></script>
+<script src="{{ asset('public/admin/vendors/anchorjs/anchor.min.js') }}"></script>
+<script src="{{ asset('public/admin/vendors/is/is.min.js') }}"></script>
+<script src="{{ asset('public/admin/vendors/fontawesome/all.min.js') }}"></script>
+<script src="{{ asset('public/admin/vendors/lodash/lodash.min.js') }}"></script>
+<script src="{{ asset('public/admin/vendors/list.js/list.min.js') }}"></script>
+<script src="{{ asset('public/admin/vendors/feather-icons/feather.min.js') }}"></script>
+<script src="{{ asset('public/admin/vendors/dayjs/dayjs.min.js') }}"></script>
+<script src="{{ asset('public/admin/assets/js/phoenix.js') }}"></script>
 
 </body>
 

@@ -7,12 +7,12 @@
     <title>Bunny Model | {{ $title ?? 'Page' }}</title>
 
     <!-- Favicons -->
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('admin/assets/img/favicons/apple-touch-icon.png') }}">
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('admin/assets/img/favicons/favicon-32x32.png') }}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('admin/assets/img/favicons/favicon-16x16.png') }}">
-    <link rel="shortcut icon" href="{{ asset('admin/assets/img/favicons/favicon.ico') }}">
-    <link rel="manifest" href="{{ asset('admin/assets/img/favicons/manifest.json') }}">
-    <meta name="msapplication-TileImage" content="{{ asset('admin/assets/img/favicons/mstile-150x150.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('public/admin/assets/img/favicons/apple-touch-icon.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('public/admin/assets/img/favicons/favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('public/admin/assets/img/favicons/favicon-16x16.png') }}">
+    <link rel="shortcut icon" href="{{ asset('public/admin/assets/img/favicons/favicon.ico') }}">
+    <link rel="manifest" href="{{ asset('public/admin/assets/img/favicons/manifest.json') }}">
+    <meta name="msapplication-TileImage" content="{{ asset('public/admin/assets/img/favicons/mstile-150x150.png') }}">
     <meta name="theme-color" content="#ffffff">
 
     <!-- Fonts -->
@@ -21,19 +21,19 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
 
     <!-- Vendors & Scripts -->
-    <link href="{{ asset('admin/vendors/simplebar/simplebar.min.css') }}" rel="stylesheet">
-    <script src="{{ asset('admin/vendors/simplebar/simplebar.min.js') }}"></script>
-    <script src="{{ asset('admin/assets/js/config.js') }}"></script>
+    <link href="{{ asset('public/admin/vendors/simplebar/simplebar.min.css') }}" rel="stylesheet">
+    <script src="{{ asset('public/admin/vendors/simplebar/simplebar.min.js') }}"></script>
+    <script src="{{ asset('public/admin/assets/js/config.js') }}"></script>
 
     <!-- Icons -->
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.8/css/line.css">
 
     <!-- Stylesheets -->
-    <link href="{{ asset('admin/assets/css/theme-rtl.min.css') }}" rel="stylesheet" id="style-rtl">
-    <link href="{{ asset('admin/assets/css/theme.min.css') }}" rel="stylesheet" id="style-default">
-    <link href="{{ asset('admin/assets/css/style.css') }}" rel="stylesheet">
-    <link href="{{ asset('admin/assets/css/user-rtl.min.css') }}" rel="stylesheet" id="user-style-rtl">
-    <link href="{{ asset('admin/assets/css/user.min.css') }}" rel="stylesheet" id="user-style-default">
+    <link href="{{ asset('public/admin/assets/css/theme-rtl.min.css') }}" rel="stylesheet" id="style-rtl">
+    <link href="{{ asset('public/admin/assets/css/theme.min.css') }}" rel="stylesheet" id="style-default">
+    <link href="{{ asset('public/admin/assets/css/style.css') }}" rel="stylesheet">
+    <link href="{{ asset('public/admin/assets/css/user-rtl.min.css') }}" rel="stylesheet" id="user-style-rtl">
+    <link href="{{ asset('public/admin/assets/css/user.min.css') }}" rel="stylesheet" id="user-style-default">
 
     <!-- RTL/LTR toggle -->
     <script>
@@ -67,7 +67,7 @@
           <a class="navbar-brand me-1 me-sm-3" href="index.html">
             <div class="d-flex align-items-center">
               <div class="d-flex align-items-center">
-                <img src="{{ asset('admin/assets/img/icons/logo.png') }}" alt="phoenix" width="27" />
+                <img src="{{ asset('public/admin/assets/img/icons/logo.png') }}" alt="phoenix" width="27" />
               </div>
             </div>
           </a>
@@ -78,7 +78,7 @@
           <li class="nav-item dropdown"><a class="nav-link lh-1 pe-0" id="navbarDropdownUser" href="#!" role="button"
               data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">
               <div class="avatar avatar-l ">
-                <img class="rounded-circle " src="{{ asset('admin/assets/img/team/avatar.webp') }}" alt="" />
+                <img class="rounded-circle " src="{{ asset('public/admin/assets/img/team/avatar.webp') }}" alt="" />
               </div>
             </a>
             <div class="dropdown-menu dropdown-menu-end navbar-dropdown-caret py-0 dropdown-profile shadow border"
@@ -87,7 +87,7 @@
                 <div class="card-body p-0">
                   <div class="text-center pt-4 pb-3">
                     <div class="avatar avatar-xl ">
-                      <img class="rounded-circle " src="{{ asset('admin/assets/img/team/avatar.webp') }}" alt="" />
+                      <img class="rounded-circle " src="{{ asset('public/admin/assets/img/team/avatar.webp') }}" alt="" />
                     </div>
                     <h6 class="mt-2 text-body-emphasis">{{ currentAdmin()->name }}</h6>
                   </div>

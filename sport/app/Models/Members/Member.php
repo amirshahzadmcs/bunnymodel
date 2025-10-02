@@ -6,12 +6,12 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Member extends Authenticatable
 {
     use HasApiTokens, Notifiable;
 
-    // Fillable fields for mass assignment
     protected $fillable = [
         'full_name',
         'country',
@@ -21,16 +21,16 @@ class Member extends Authenticatable
         'email',
         'password',
         'profile_status',
-        'email_status'
+        'email_status',
+        'verification_token'
     ];
 
-    // Hidden fields when converting to array or JSON
     protected $hidden = [
         'password',
         'remember_token',
+        'verification_token'
     ];
 
-    // Casts if needed (optional)
     protected function casts(): array
     {
         return [
@@ -39,54 +39,113 @@ class Member extends Authenticatable
         ];
     }
 
-    public function setFullNameAttribute($value)
+    // Safe encryption methods
+    protected function fullName(): Attribute
     {
-        $this->attributes['full_name'] = Crypt::encryptString($value);
-    }
-    public function setUsernameAttribute($value)
-    {
-        $this->attributes['username'] = Crypt::encryptString($value);
-    }
-    public function setEmailAttribute($value)
-    {
-        $this->attributes['email'] = Crypt::encryptString($value);
-    }
-    public function setCountryAttribute($value)
-    {
-        $this->attributes['country'] = $value ? Crypt::encryptString($value) : null;
-    }
-    public function setNationalityAttribute($value)
-    {
-        $this->attributes['nationality'] = $value ? Crypt::encryptString($value) : null;
-    }
-    public function setPhoneAttribute($value)
-    {
-        $this->attributes['phone'] = $value ? Crypt::encryptString($value) : null;
+        return Attribute::make(
+            get: fn ($value) => $value ? $this->safeDecrypt($value) : null,
+            set: fn ($value) => $value ? $this->safeEncrypt($value) : null,
+        );
     }
 
-    // Decrypt on get
-    public function getFullNameAttribute($value)
+    protected function email(): Attribute
     {
-        return Crypt::decryptString($value);
+        return Attribute::make(
+            get: fn ($value) => $value ? $this->safeDecrypt($value) : null,
+            set: fn ($value) => $value ? $this->safeEncrypt($value) : null,
+        );
     }
-    public function getUsernameAttribute($value)
+
+    protected function username(): Attribute
     {
-        return Crypt::decryptString($value);
+        return Attribute::make(
+            get: fn ($value) => $value ? $this->safeDecrypt($value) : null,
+            set: fn ($value) => $value ? $this->safeEncrypt($value) : null,
+        );
     }
-    public function getEmailAttribute($value)
+
+    protected function phone(): Attribute
     {
-        return Crypt::decryptString($value);
+        return Attribute::make(
+            get: fn ($value) => $value ? $this->safeDecrypt($value) : null,
+            set: fn ($value) => $value ? $this->safeEncrypt($value) : null,
+        );
     }
-    public function getCountryAttribute($value)
+
+    protected function country(): Attribute
     {
-        return $value ? Crypt::decryptString($value) : null;
+        return Attribute::make(
+            get: fn ($value) => $value ? $this->safeDecrypt($value) : null,
+            set: fn ($value) => $value ? $this->safeEncrypt($value) : null,
+        );
     }
-    public function getNationalityAttribute($value)
+
+    protected function nationality(): Attribute
     {
-        return $value ? Crypt::decryptString($value) : null;
+        return Attribute::make(
+            get: fn ($value) => $value ? $this->safeDecrypt($value) : null,
+            set: fn ($value) => $value ? $this->safeEncrypt($value) : null,
+        );
     }
-    public function getPhoneAttribute($value)
+
+    /**
+     * Safe encryption method with fallback
+     */
+    private function safeEncrypt($value)
     {
-        return $value ? Crypt::decryptString($value) : null;
+        try {
+            return Crypt::encryptString($value);
+        } catch (\Exception $e) {
+            // Fallback to base64 encoding if encryption fails
+            return base64_encode($value);
+        }
+    }
+
+    /**
+     * Safe decryption method with fallback
+     */
+    private function safeDecrypt($value)
+    {
+        try {
+            return Crypt::decryptString($value);
+        } catch (\Exception $e) {
+            // Try to decode as base64 if decryption fails
+            $decoded = base64_decode($value, true);
+            return $decoded !== false ? $decoded : $value;
+        }
+    }
+
+    // Custom methods for encrypted search
+    public static function findByEmail($email)
+    {
+        return static::all()->first(function ($member) use ($email) {
+            try {
+                return $member->email === $email;
+            } catch (\Exception $e) {
+                return false;
+            }
+        });
+    }
+
+    public static function findByUsernameOrEmail($identifier)
+    {
+        return static::all()->first(function ($member) use ($identifier) {
+            try {
+                return $member->email === $identifier || $member->username === $identifier;
+            } catch (\Exception $e) {
+                return false;
+            }
+        });
+    }
+
+    public static function emailExists($email)
+    {
+        return static::all()->contains(function ($member) use ($email) {
+            try {
+                return $member->email === $email;
+            } catch (\Exception $e) {
+                return false;
+            }
+        });
     }
 }

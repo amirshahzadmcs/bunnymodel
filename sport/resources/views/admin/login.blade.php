@@ -6,19 +6,19 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Login || Bunny Model</title>
+  <title>Login | Bunny Model</title>
 
   <!-- ===============================================-->
   <!--    Favicons-->
   <!-- ===============================================-->
-  <link rel="apple-touch-icon" sizes="180x180" href="assets/img/favicons/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicons/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="assets/img/favicons/favicon-16x16.png">
-  <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicons/favicon.ico">
-  <link rel="manifest" href="assets/img/favicons/manifest.json">
-  <meta name="msapplication-TileImage" content="assets/img/favicons/mstile-150x150.png">
-  <script src="vendors/simplebar/simplebar.min.js"></script>
-  <script src="assets/js/config.js"></script>
+  <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('public/admin/assets/img/favicons/apple-touch-icon.png') }}">
+  <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('public/admin/assets/img/favicons/favicon-32x32.png') }}">
+  <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('public/admin/assets/img/favicons/favicon-16x16.png') }}">
+  <link rel="shortcut icon" type="image/x-icon" href="{{ asset('public/admin/assets/img/favicons/favicon.ico') }}">
+  <link rel="manifest" href="{{ asset('public/admin/assets/img/favicons/manifest.json') }}">
+  <meta name="msapplication-TileImage" content="{{ asset('public/admin/assets/img/favicons/mstile-150x150.png') }}">
+  <script src="{{ asset('public/admin/vendors/simplebar/simplebar.min.js') }}"></script>
+  <script src="{{ asset('public/admin/assets/js/config.js') }}"></script>
 
   <!-- ===============================================-->
   <!--    Stylesheets-->
@@ -27,8 +27,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
   <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&amp;display=swap"
     rel="stylesheet">
-  <link href="assets/css/theme.min.css" type="text/css" rel="stylesheet" id="style-default">
-  <link href="assets/css/style.css" type="text/css" rel="stylesheet">
+  <link href="{{ asset('public/admin/assets/css/theme.min.css') }}" type="text/css" rel="stylesheet" id="style-default">
+  <link href="{{ asset('public/admin/assets/css/style.css') }}" type="text/css" rel="stylesheet">
 
 </head>
 
@@ -44,14 +44,14 @@
           <div class="row justify-content-center gy-7">
             <div class="col-md-6 d-lg-block d-none">
               <div class="auth-title-box me-5">
-                <img src="assets/img/icons/logo-1.png" alt="phoenix" width="128" />
+                <img src="{{ asset('public/admin/assets/img/icons/logo-1.png') }}" alt="phoenix" width="128" />
               </div>
             </div>
             <div class="col-md-5 col-sm-12">
               <div class="auth-form-box">
                 <div class="text-center mb-5">
                   <div class="d-lg-none d-flex flex-center text-decoration-none mb-6" href="#.">
-                          <img src="assets/img/icons/logo-1.png" alt="phoenix" width="128">
+                          <img src="{{ asset('public/admin/admin/assets/img/icons/logo-1.png') }}" alt="phoenix" width="128">
                         </div>
                   <h3 class="text-body-highlight">Sign In</h3>
                   <!-- <p class="text-body-tertiary">Get access to your account</p> -->
@@ -119,9 +119,6 @@
 								<input class="form-check-input" id="remember" type="checkbox" name="remember" {{ old('remember') ? 'checked' : '' }} />
 								<label class="form-check-label mb-0" for="remember">Remember me</label>
 							</div>
-						</div>
-						<div class="col-auto">
-							<a class="fs-9 fw-semibold" href="{{ url('/admin/forgot-password') }}">Forgot Password?</a>
 						</div>
 					</div>
 
