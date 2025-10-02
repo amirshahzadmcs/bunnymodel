@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('seos', function (Blueprint $table) {
+        Schema::create('pages', function (Blueprint $table) {
             $table->id();
             $table->string('page_name')->unique(); // Name of the page
             $table->string('meta_title')->nullable();
@@ -16,6 +16,7 @@ return new class extends Migration
             $table->text('meta_keywords')->nullable();
             $table->string('slug')->nullable();
             $table->string('canonical_url')->nullable();
+            $table->string('status', 20)->default('publish')->comment('Status of the record')->index();
             $table->boolean('no_index')->default(false);
             $table->boolean('no_follow')->default(false);
             $table->timestamps();
@@ -24,6 +25,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('seos');
+        Schema::dropIfExists('pages');
     }
 };

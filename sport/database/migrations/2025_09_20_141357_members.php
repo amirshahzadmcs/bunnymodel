@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id(); // Primary key (auto-increment)
 
             $table->string('full_name');
-            $table->string('country' , 30)->nullable();
-            $table->string('nationality' , 30)->nullable();
-            $table->string('phone' , 30)->nullable()->index();      // index for search
+            $table->string('country')->nullable();
+            $table->string('nationality')->nullable();
+            $table->string('phone')->nullable()->index();      // index for search
             $table->string('username')->index();   // index for search
             $table->string('email')->unique()->index(); // unique + index
             $table->string('password');
