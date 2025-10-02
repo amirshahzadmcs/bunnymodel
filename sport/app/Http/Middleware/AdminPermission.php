@@ -8,6 +8,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
+use Spatie\Permission\Exceptions\PermissionDoesNotExist;
 
 class AdminPermission
 {
@@ -17,22 +18,31 @@ class AdminPermission
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      * @param  string  ...$permissions  The list of allowed permission slugs (e.g., 'edit-post', 'delete-user')
      */
-    public function handle(Request $request, Closure $next, ...$permissions): Response
-    {
-        // 1. Check if admin is logged in
-        if (!Auth::guard('admin')->check()) {
-            return redirect()->route('admin.login');
-        }
 
-        /** @var \App\Models\Admin\AdminModel $admin */
+
+    public function handle($request, Closure $next, $permission)
+    {
         $admin = Auth::guard('admin')->user();
 
-        // 2. Check permissions
-        if (!$admin->hasPermission($permissions)) {
-            abort(403, 'Unauthorized. You do not have the required permission(s).');
+        if (!$admin) {
+            abort(403, 'Unauthorized');
         }
 
-        return $next($request);
+        $roles = $admin->roles;
+
+        foreach ($roles as $role) {
+            try {
+                if ($role->hasPermissionTo($permission, $role->guard_name)) {
+                    return $next($request);
+                }
+            } catch (PermissionDoesNotExist $e) {
+                // Permission does not exist, skip and continue to next role
+                continue;
+            }
+        }
+
+        // No role has permission or permission doesn't exist
+        abort(403, 'Unauthorized');
     }
 
 }

@@ -61,7 +61,26 @@
                         @enderror
                     </div>
                 </div>
-
+                <div class="col-sm-12 col-md-12">
+                    <h6 class="mb-2">Choose Permissions</h6>
+                    <div class="row">
+                        @foreach($permissions as $permission)
+                            <div class="col-md-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" 
+                                        type="checkbox" 
+                                        name="permissions[]" 
+                                        value="{{ $permission->name }}" 
+                                        id="permission-{{ $permission->id }}"
+                                        {{ in_array($permission->name, $rolePermissions) ? 'checked' : '' }}/>
+                                    <label class="form-check-label" for="permission-{{ $permission->id }}">
+                                        {{ $permission->name }}
+                                    </label>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
                 <!-- Submit Button -->
                 <div class="col-12 gy-6">
                     <div class="row g-3">
