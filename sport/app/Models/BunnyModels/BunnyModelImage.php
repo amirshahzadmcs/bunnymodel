@@ -13,9 +13,7 @@ class BunnyModelImage extends Model
 
     protected $fillable = [
         'model_id',
-        'image_path',
-        'alt_text',
-        'is_main',
+        'image',
     ];
 
     public function model()

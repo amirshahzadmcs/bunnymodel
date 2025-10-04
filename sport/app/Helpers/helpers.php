@@ -17,24 +17,34 @@ if (!function_exists('pageTitle')) {
 }
 
 
-if (!function_exists('hasAdminPermission')) {
+if (!function_exists('adminCan')) {
     /**
-     * Check if the current admin has a permission
+     * Check if the currently logged-in admin has a permission
      *
      * @param string $permission
      * @return bool
      */
-    function hasAdminPermission($permission)
+    function adminCan($permission)
     {
         $admin = Auth::guard('admin')->user();
         if (!$admin) {
             return false;
         }
 
-        // Make sure your AdminModel has hasPermission method
-        return $admin->hasPermission($permission);
+        foreach ($admin->roles as $role) {
+            try {
+                if ($role->hasPermissionTo($permission, $role->guard_name)) {
+                    return true;
+                }
+            } catch (\Spatie\Permission\Exceptions\PermissionDoesNotExist $e) {
+                continue;
+            }
+        }
+
+        return false;
     }
 }
+
 
 if (!function_exists('isActiveRoute')) {
     function isActiveRoute($routeNames, $output = 'active') {

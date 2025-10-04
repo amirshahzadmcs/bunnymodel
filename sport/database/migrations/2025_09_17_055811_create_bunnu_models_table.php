@@ -20,20 +20,20 @@ return new class extends Migration
             $table->string('phone', 50)->nullable();
             $table->boolean('phone_verified')->default(false);
             $table->text('description')->nullable();
-            $table->string('age', 20);
-            $table->string('hips', 100);
-            $table->string('waist', 100);
-            $table->string('bust', 20);
-            $table->string('weight', 20);
-            $table->string('height', 20);
-            $table->string('nationality', 50);
-            $table->string('living_country', 50);
-            $table->string('city', 100);
-            $table->string('languages', 200);
+            $table->string('age', 20)->nullable();
+            $table->string('hips', 100)->nullable();
+            $table->string('waist', 100)->nullable();
+            $table->string('bust', 20)->nullable();
+            $table->string('weight', 20)->nullable();
+            $table->string('height', 20)->nullable();
+            $table->string('nationality', 50)->nullable();
+            $table->string('living_country', 50)->nullable();
+            $table->string('city', 100)->nullable();
+            $table->string('languages', 200)->nullable();
             $table->string('currency', 20)->nullable();
             $table->timestamp('publishedOn')->useCurrent();
             $table->timestamp('updatedOn')->useCurrent()->useCurrentOnUpdate();
-            $table->string('ip', 50);
+            $table->string('ip', 50)->nullable();
             $table->string('visit_count', 20)->nullable();
 
             // Indexes for faster search
