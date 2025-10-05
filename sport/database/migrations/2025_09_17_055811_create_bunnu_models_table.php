@@ -31,12 +31,11 @@ return new class extends Migration
             $table->string('city', 100)->nullable();
             $table->string('languages', 200)->nullable();
             $table->string('currency', 20)->nullable();
+            $table->string('profile_status', 20)->default('public');
             $table->timestamp('publishedOn')->useCurrent();
             $table->timestamp('updatedOn')->useCurrent()->useCurrentOnUpdate();
             $table->string('ip', 50)->nullable();
             $table->string('visit_count', 20)->nullable();
-
-            // Indexes for faster search
             $table->index('username');
             $table->index('email');
             $table->index('firstname');

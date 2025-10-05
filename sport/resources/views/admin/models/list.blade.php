@@ -68,7 +68,7 @@
                         <!-- Models Name -->
                         <td class="align-middle product white-space-nowrap">
                           @if($model->images->isNotEmpty())
-                                <img src="{{ asset('storage/app/public/'.$model->images->first()->image) }}" style="border-radius: 19px; width: 45px;" alt="Model Image" width="60">
+                                <img src="{{ asset($model->images->first()->image) }}" style="border-radius: 19px; width: 45px;" alt="Model Image" width="60">
                             @else
                                 No image
                             @endif
@@ -107,17 +107,23 @@
                         </td>
                         <!-- Status -->
                         <td class="align-middle white-space-nowrap text-body-tertiary ps-5 text-end">
-                            @if($model->profile_status !== 'approved')
+                            @if($model->profile_status == 'public')
                                 <span class="badge badge-phoenix fs-10 badge-phoenix-success">
-                                    <span class="badge-label">Approved</span>
+                                    <span class="badge-label">Public</span>
                                     <span class="ms-1" data-feather="check" style="height:12.8px;width:12.8px;"></span>
+                                </span>
+                            @elseif($model->profile_status == 'private')
+                                <span class="badge badge-phoenix fs-10 badge-phoenix-warning">
+                                    <span class="badge-label">Private</span>
+                                    <span class="ms-1" data-feather="x" style="height:12.8px;width:12.8px;"></span>
                                 </span>
                             @else
                                 <span class="badge badge-phoenix fs-10 badge-phoenix-danger">
-                                    <span class="badge-label">Pending</span>
+                                    <span class="badge-label">Block</span>
                                     <span class="ms-1" data-feather="x" style="height:12.8px;width:12.8px;"></span>
                                 </span>
                             @endif
+
                         </td>
 
                         <!-- Actions -->

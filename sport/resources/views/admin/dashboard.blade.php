@@ -115,7 +115,7 @@
                         <td class="align-middle product white-space-nowrap">
 
                             @if($model->images->isNotEmpty())
-                                <img src="{{ asset('public/models/'.$folder.'/'.$model->images->first()->image) }}" style="border-radius: 19px; width: 45px;" alt="Model Image" width="60">
+                                <img src="{{ asset($model->images->first()->image) }}" style="border-radius: 19px; width: 45px;" alt="Model Image" width="60">
                             @else
                                 No image
                             @endif

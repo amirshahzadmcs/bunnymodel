@@ -391,7 +391,24 @@
 							@enderror
 						</div>
 					</div>
-
+					<div class="col-sm-6 col-md-6">
+						<div class="form-floating">
+							<select class="form-select @error('profile_status') is-invalid @enderror" 
+								id="profile_status" 
+								name="profile_status" 
+								required>
+								<option value="">Select profile status</option>
+								<option value="public" {{ old('profile_status', $model->profile_status) == 'public' ? 'selected' : '' }}>Public</option>
+								<option value="private" {{ old('profile_status', $model->profile_status) == 'private' ? 'selected' : '' }}>Private</option>
+								<option value="block" {{ old('profile_status', $model->profile_status) == 'block' ? 'selected' : '' }}>Block</option>
+							</select>
+							<label for="profile_status">Currency</label>
+							@error('profile_status')
+								<span class="text-danger fs-8">{{ $message }}</span>
+							@enderror
+						</div>
+					</div>
+					
 					<h6 class="mt-3">Model images</h6>
 
 					<div class="dropzone dropzone-multiple p-0 mb-5 dz-clickable text-align-center" id="my-awesome-dropzone">
@@ -401,13 +418,15 @@
 						@if(isset($model->images) && count($model->images) > 0)
 							@foreach($model->images as $image)
 								<div class="dz-preview-item existing-image" data-image-id="{{ $image->id }}" style="position: relative; margin-right: 10px; margin-bottom: 10px;">
-									<img src="{{ asset('storage/' . $image->path) }}" class="preview-image" style="max-width: 100px; height: auto;">
+									<img src="{{ asset($image->image) }}" class="preview-image" style="max-width: 100px; height: auto;">
 									<a class="remove-existing-image" style="position: absolute; top: 0; right: 0; background: rgba(0, 0, 0, 0.5); color: white; border-radius: 50%; width: 20px; height: 20px; font-size: 11px; padding: 2px 6px; cursor: pointer;">X</a>
 									<input type="hidden" name="existing_images[]" value="{{ $image->id }}">
 								</div>
 							@endforeach
 						@endif
 					</div>
+					<!-- Currency -->
+					
 
 					<!-- Dropzone message -->
 					<div class="dz-message text-body-tertiary text-opacity-85 text-center" data-dz-message="data-dz-message">

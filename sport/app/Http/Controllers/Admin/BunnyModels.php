@@ -11,6 +11,7 @@ use Illuminate\Support\Str;
 use App\Imports\ModelsImport;
 use App\Exports\ModelsExport;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Storage;
 
 class BunnyModels extends Controller
 {
@@ -110,7 +111,7 @@ class BunnyModels extends Controller
                         $folderName = $username;
 
                         // Ensure folder exists
-                        $storagePath = storage_path("models/{$folderName}");
+                        $storagePath = storage_path("app/public/models/{$folderName}");
                         if (!file_exists($storagePath)) {
                             mkdir($storagePath, 0755, true);
                         }
@@ -121,12 +122,12 @@ class BunnyModels extends Controller
                         // Prevent overwriting existing file
                         $filename = $this->getUniqueFileName($storagePath, $filename);
 
-                        $path = $image->storeAs("models/{$folderName}", $filename);
+                        $path = $image->storeAs("app/public/models/{$folderName}", $filename);
 
                         // Save in DB
                         BunnyModelImage::create([
                             'model_id' => $model->id,
-                            'image' => "models/{$folderName}/{$filename}"
+                            'image' => "storage/app/public/models/{$folderName}/{$filename}"
                         ]);
                     }
                 }
@@ -213,7 +214,7 @@ class BunnyModels extends Controller
         $model->city = $request->city;
         $model->languages = $request->languages;
         $model->currency = $request->currency;
-        $model->status = $request->status;
+        $model->profile_status = $request->profile_status;
         $model->save();
 
         // Update prices
@@ -231,27 +232,35 @@ class BunnyModels extends Controller
 
         // Handle new uploaded images
         if ($request->hasFile('images')) {
-            $folderName = strtolower(str_replace(' ', '_', $model->firstname));
-            $storagePath = storage_path("app/public/models/{$folderName}");
 
-            if (!file_exists($storagePath)) {
-                mkdir($storagePath, 0755, true);
+            $folderName = strtolower(str_replace(' ', '_', $model->firstname));
+            $storageFolder = "models/{$folderName}";
+
+            // Delete previous images
+            $previousImages = BunnyModelImage::where('model_id', $model->id)->get();
+            foreach ($previousImages as $oldImage) {
+                if (Storage::disk('public')->exists(str_replace('storage/', '', $oldImage->image))) {
+                    Storage::disk('public')->delete(str_replace('storage/', '', $oldImage->image));
+                }
+                $oldImage->delete(); // remove database record
             }
 
+            // Store new images
             foreach ($request->file('images') as $index => $image) {
                 if ($image->isValid()) {
                     $extension = $image->getClientOriginalExtension();
                     $filename = $folderName . '_' . time() . '_' . ($index + 1) . '.' . $extension;
 
-                    $path = $image->storeAs("app/public/models/{$folderName}", $filename);
+                    $path = $image->storeAs($storageFolder, $filename, 'public');
 
                     BunnyModelImage::create([
                         'model_id' => $model->id,
-                        'image' => "models/{$folderName}/{$filename}"
+                        'image' => "storage/{$storageFolder}/{$filename}" // public URL
                     ]);
                 }
             }
         }
+
 
         return redirect()->route('admin.models.update', $model->id)->with('success', 'Model updated successfully');
     }
