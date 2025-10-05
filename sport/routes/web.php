@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\MemberController;
+use App\Http\Controllers\Admin\BunnyModels;
 
 
 // Login
@@ -69,8 +70,22 @@ Route::middleware(['auth:admin', 'admin.permission:Manage pages'])->group(functi
     });
 });
 
-// Members
+// Models
 Route::middleware(['auth:admin', 'admin.permission:Manage members'])->group(function () {
+    Route::prefix('admin/models')->group(function () {
+        Route::get('/', [BunnyModels::class, 'index'])->name('admin.models.index');
+        Route::get('/create', [BunnyModels::class, 'create'])->name('admin.models.create');
+        Route::post('/', [BunnyModels::class, 'store'])->name('admin.models.store');
+        Route::get('/{model}/update', [BunnyModels::class, 'update'])->name('admin.models.update');
+        Route::put('/{model}', [BunnyModels::class, 'updateStore'])->name('admin.models.updateStore');
+        Route::delete('/{model}', [BunnyModels::class, 'destroy'])->name('admin.models.destroy');
+        Route::get('/export', [BunnyModels::class, 'export'])->name('admin.models.export');
+        Route::post('/import', [BunnyModels::class, 'import'])->name('admin.models.import');
+    });
+});
+
+// Members
+Route::middleware(['auth:admin', 'admin.permission:Manage models'])->group(function () {
     Route::prefix('admin/members')->group(function () {
         Route::get('/', [MemberController::class, 'index'])->name('admin.members.index');
         Route::get('/{member}/update', [MemberController::class, 'update'])->name('admin.members.update');

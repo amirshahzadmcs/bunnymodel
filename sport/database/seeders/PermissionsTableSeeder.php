@@ -11,9 +11,11 @@ class PermissionsTableSeeder extends Seeder
     {
         DB::table('permissions')->insert([
             ['name' => 'Manage Users', 'slug' => 'manage-users', 'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'Manage Posts', 'slug' => 'manage-posts', 'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'View Reports', 'slug' => 'view-reports', 'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'Edit Settings', 'slug' => 'edit-settings', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Access Dashboard', 'slug' => 'access-dashboard', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Manage roles permissions', 'slug' => 'manage-roles-permissions', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Manage pages', 'slug' => 'manage-pages', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Manage members', 'slug' => 'manage-members', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Manage models', 'slug' => 'manage-models', 'created_at' => now(), 'updated_at' => now()],
         ]);
     }
 }
