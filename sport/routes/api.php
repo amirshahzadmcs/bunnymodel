@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\BunnyModels\BunnyModelController;
 use App\Http\Controllers\Api\Members\MembersController;
 use App\Http\Controllers\Api\Page\PageController;
-
+use App\Http\Controllers\API\Post\PostController;
 
 Route::fallback(function () {
     return response()->json([
@@ -44,3 +44,9 @@ Route::middleware('MemberAuth')->prefix('member')->group(function () {
     Route::post('/update-password', [MembersController::class, 'updatePassword']);
 
 });
+
+
+
+
+Route::get('/posts', [PostController::class, 'index']);      // Paginated posts
+Route::get('/posts/{id}', [PostController::class, 'show']); // Single post
