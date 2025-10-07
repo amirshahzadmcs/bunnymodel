@@ -9,14 +9,21 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('posts', function (Blueprint $table) {
-            $table->id(); // Auto-increment ID
-            $table->bigInteger('wp_id')->unique(); // Original WordPress post ID
+            $table->id();
+            $table->bigInteger('wp_id')->unique(); // WordPress post ID
             $table->string('title');
-            $table->longText('content');
+            $table->string('slug')->unique(); // Slug for SEO-friendly URL
+            $table->text('content');
             $table->text('excerpt')->nullable();
-            $table->string('status')->default('publish'); // post_status
-            $table->string('post_type')->default('post'); // post_type
-            $table->timestamp('published_at')->nullable();
+            $table->string('status'); // publish, draft, etc.
+            $table->string('post_type'); // post, page, etc.
+            $table->dateTime('published_at');
+            
+            // SEO fields
+            $table->string('seo_title')->nullable();
+            $table->text('meta_description')->nullable();
+            $table->string('meta_keywords')->nullable();
+
             $table->timestamps();
         });
     }

@@ -8,12 +8,12 @@ use App\Models\API\Post\PostModel;
 
 class PostController extends Controller
 {
-    // Get paginated posts
+    // Get paginated published posts
     public function index(Request $request)
     {
         $perPage = $request->input('per_page', 10);
 
-        $posts = PostModel::where('status', 'publish')
+        $posts = PostModel::published()
                     ->orderBy('published_at', 'desc')
                     ->paginate($perPage);
 
@@ -30,9 +30,25 @@ class PostController extends Controller
     // Get single post by ID
     public function show($id)
     {
-        $post = PostModel::where('id', $id)
-                    ->where('status', 'publish')
-                    ->first();
+        $post = PostModel::published()->where('id', $id)->first();
+
+        if (!$post) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Post not found'
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $post
+        ]);
+    }
+
+    // Get single post by slug
+    public function showBySlug($slug)
+    {
+        $post = PostModel::published()->where('slug', $slug)->first();
 
         if (!$post) {
             return response()->json([

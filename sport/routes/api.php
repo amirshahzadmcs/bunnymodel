@@ -49,4 +49,4 @@ Route::middleware('MemberAuth')->prefix('member')->group(function () {
 
 
 Route::get('/posts', [PostController::class, 'index']);      // Paginated posts
-Route::get('/posts/{id}', [PostController::class, 'show']); // Single post
+Route::get('/post/{slug}', [PostController::class, 'showBySlug']); // Single post

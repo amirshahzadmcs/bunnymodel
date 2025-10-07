@@ -6,17 +6,28 @@ use Illuminate\Database\Eloquent\Model;
 
 class PostModel extends Model
 {
-    protected $table = 'posts'; // Your Laravel table name
+    protected $table = 'posts';
 
     protected $fillable = [
         'wp_id',
         'title',
+        'slug',
         'content',
         'excerpt',
         'status',
         'post_type',
         'published_at',
+        'seo_title',
+        'meta_description',
+        'meta_keywords',
     ];
 
-    public $timestamps = true; // If you have created_at and updated_at columns
+    // Optional: format published_at as Carbon date
+    protected $dates = ['published_at'];
+
+    // Scope to fetch only published posts
+    public function scopePublished($query)
+    {
+        return $query->where('status', 'publish');
+    }
 }
