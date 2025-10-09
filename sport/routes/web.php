@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\PageController;
+use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\MemberController;
 use App\Http\Controllers\Admin\BunnyModels;
 
@@ -61,7 +62,7 @@ Route::middleware(['auth:admin', 'admin.permission:Manage Users'])->group(functi
 // Pages
 Route::middleware(['auth:admin', 'admin.permission:Manage pages'])->group(function () {
     Route::prefix('admin/pages')->group(function () {
-        Route::get('/', [PageController::class, 'index'])->name('admin.pages.index');
+        Route::get('/', [PageControllerPageController::class, 'index'])->name('admin.pages.index');
         Route::get('/create', [PageController::class, 'create'])->name('admin.pages.create');
         Route::post('/', [PageController::class, 'store'])->name('admin.pages.store');
         Route::get('/{page}/update', [PageController::class, 'update'])->name('admin.pages.update');
@@ -69,6 +70,19 @@ Route::middleware(['auth:admin', 'admin.permission:Manage pages'])->group(functi
         Route::delete('/{page}', [PageController::class, 'destroy'])->name('admin.pages.destroy');
     });
 });
+
+// Posts
+Route::middleware(['auth:admin', 'admin.permission:Manage posts'])->group(function () {
+    Route::prefix('admin/posts')->group(function () {
+        Route::get('/', [PostController::class, 'index'])->name('admin.posts.index');
+        Route::get('/create', [PostController::class, 'create'])->name('admin.posts.create');
+        Route::post('/', [PostController::class, 'store'])->name('admin.posts.store');
+        Route::get('/{post}/update', [PostController::class, 'update'])->name('admin.posts.update');
+        Route::put('/{post}', [PostController::class, 'updateStore'])->name('admin.posts.updateStore');
+        Route::delete('/{post}', [PostController::class, 'destroy'])->name('admin.posts.destroy');
+    });
+});
+
 
 // Models
 Route::middleware(['auth:admin', 'admin.permission:Manage members'])->group(function () {

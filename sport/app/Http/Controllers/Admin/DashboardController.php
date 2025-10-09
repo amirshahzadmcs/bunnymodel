@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Members\Member;
 use App\Models\BunnyModels\BunnuModel;
+use App\Models\PostModel;
 
 class DashboardController extends Controller
 {
@@ -16,6 +17,7 @@ class DashboardController extends Controller
 
         // Count total models
         $totalModels = BunnuModel::count();
+        $posts = PostModel::count();
 
         $models = BunnuModel::with(['prices', 'images'])->get();
 
@@ -23,6 +25,6 @@ class DashboardController extends Controller
         $title = 'Dashboard';
 
         // Pass values to view
-        return view('admin.dashboard', compact('title', 'totalMembers', 'totalModels' , 'models'));
+        return view('admin.dashboard', compact('title', 'totalMembers', 'totalModels' , 'models' , 'posts'));
     }
 }

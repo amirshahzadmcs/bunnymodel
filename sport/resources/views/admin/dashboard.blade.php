@@ -32,11 +32,11 @@
                 <div class="col-md-4 col-md-auto">
                   <div class="d-flex align-items-center">
                     <span class="fa-stack" style="min-height: 40px;min-width: 40px;">
-                      <span class="me-2 text-danger" data-feather="map-pin" style="min-height:30px; width:30px"></span>
+                      <span class="me-2 text-danger" data-feather="file-text" style="min-height:30px; width:30px"></span>
                     </span>
                     <div class="ms-3">
-                      <h5 class="mb-0">15 Locations</h5>
-                      <p class="text-body-secondary fs-9 mb-0">Total number of locations</p>
+                      <h5 class="mb-0">{{$posts}} Blog Posts</h5>
+                      <p class="text-body-secondary fs-9 mb-0">Total number of Blog Posts</p>
                     </div>
                   </div>
                 </div>

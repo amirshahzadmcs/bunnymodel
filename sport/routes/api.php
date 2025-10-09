@@ -45,8 +45,6 @@ Route::middleware('MemberAuth')->prefix('member')->group(function () {
 
 });
 
-
-
-
+// Post routes (public)
 Route::get('/posts', [PostController::class, 'index']);      // Paginated posts
 Route::get('/post/{slug}', [PostController::class, 'showBySlug']); // Single post

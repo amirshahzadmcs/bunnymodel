@@ -8,16 +8,14 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('posts', function (Blueprint $table) {
+       Schema::create('posts', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('wp_id')->unique(); // WordPress post ID
             $table->string('title');
-            $table->string('slug')->unique(); // Slug for SEO-friendly URL
-            $table->text('content');
+            $table->string('slug')->unique();
+            $table->longText('content');
             $table->text('excerpt')->nullable();
             $table->string('status'); // publish, draft, etc.
-            $table->string('post_type'); // post, page, etc.
-            $table->dateTime('published_at');
+            $table->string('feature_image')->nullable();
             
             // SEO fields
             $table->string('seo_title')->nullable();
@@ -25,7 +23,12 @@ return new class extends Migration
             $table->string('meta_keywords')->nullable();
 
             $table->timestamps();
+
+            // Index for faster lookups
+            $table->index('slug');
+            $table->index('title');
         });
+
     }
 
     public function down(): void

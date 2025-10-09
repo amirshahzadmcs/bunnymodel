@@ -4,7 +4,7 @@ namespace App\Http\Controllers\API\Post;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\API\Post\PostModel;
+use App\Models\PostModel;
 
 class PostController extends Controller
 {
@@ -13,9 +13,7 @@ class PostController extends Controller
     {
         $perPage = $request->input('per_page', 10);
 
-        $posts = PostModel::published()
-                    ->orderBy('published_at', 'desc')
-                    ->paginate($perPage);
+        $posts = PostModel::published()->paginate($perPage);
 
         return response()->json([
             'status' => 'success',

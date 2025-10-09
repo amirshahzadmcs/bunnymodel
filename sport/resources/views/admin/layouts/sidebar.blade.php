@@ -4,18 +4,32 @@
     <div class="navbar-vertical-content">
       <ul class="navbar-nav flex-column" id="navbarVerticalNav">
 
+        @php
+            $routesIncluded = ['dashboard.index'];
+        @endphp
         <li class="nav-item">
-            
+            <div class="nav-item-wrapper">
+            <a class="nav-link label-1 {{ isActiveRoute($routesIncluded) }}" href="{{route('dashboard.index')}}" role="button" data-bs-toggle="" aria-expanded="{{ isMenuOpen($routesIncluded) ? 'true' : 'false' }}" >
+              <div class="d-flex align-items-center">
+                <span class="nav-link-icon">
+                  <span data-feather="pie-chart"></span>
+                </span>
+                <span class="nav-link-text-wrapper">
+                  <span class="nav-link-text">Dashboard</span>
+                </span>
+              </div>
+            </a>
+          </div>
             @php
                 // Define the routes for active menu check
-                $userRoutes = ['admin.register', 'admin.user.list'];
+                $routesIncluded = ['admin.register', 'admin.user.list'];
             @endphp
 
             @if(adminCan('Manage Users'))
             <div class="nav-item-wrapper">
-                <a class="nav-link {{ isActiveRoute($userRoutes) }} dropdown-indicator label-1" 
+                <a class="nav-link {{ isActiveRoute($routesIncluded) }} dropdown-indicator label-1" 
                 href="#user-managments" 
-                aria-expanded="{{ isMenuOpen($userRoutes) ? 'true' : 'false' }}" 
+                aria-expanded="{{ isMenuOpen($routesIncluded) ? 'true' : 'false' }}" 
                 role="button" 
                 data-bs-toggle="collapse" 
                 aria-controls="user-managments">
@@ -31,7 +45,7 @@
                 </a>
 
                 <div class="parent-wrapper label-1">
-                    <ul class="nav collapse parent {{ isMenuOpen($userRoutes) }}" data-bs-parent="#navbarVerticalCollapse" id="user-managments">
+                    <ul class="nav collapse parent {{ isMenuOpen($routesIncluded) }}" data-bs-parent="#navbarVerticalCollapse" id="user-managments">
                         <li class="collapsed-nav-item-title d-none">User</li>
 
                         <li class="nav-item">
@@ -210,7 +224,59 @@
                   </ul>
               </div>
           </div>
-             @endif
+          @endif
+          @php
+              $pageRoutes = ['admin.posts.create', 'admin.posts.index'];
+          @endphp
+        
+          @if(adminCan('Manage posts'))
+          <div class="nav-item-wrapper">
+              <a class="nav-link dropdown-indicator label-1 {{ in_array(Route::currentRouteName(), $pageRoutes) ? 'active' : '' }}" 
+                href="#post-managements" 
+                role="button" 
+                data-bs-toggle="collapse" 
+                aria-expanded="{{ in_array(Route::currentRouteName(), $pageRoutes) ? 'true' : 'false' }}" 
+                aria-controls="post-managements">
+                  <div class="d-flex align-items-center">
+                      <div class="dropdown-indicator-icon-wrapper">
+                          <span class="fas fa-caret-right dropdown-indicator-icon"></span>
+                      </div>
+                      <span class="nav-link-icon">
+                          <span data-feather="file-text"></span>
+                      </span>
+                      <span class="nav-link-text">Posts</span>
+                  </div>
+              </a>
+
+              <div class="parent-wrapper label-1">
+                  <ul class="nav collapse parent {{ in_array(Route::currentRouteName(), $pageRoutes) ? 'show' : '' }}" 
+                      data-bs-parent="#navbarVerticalCollapse" 
+                      id="post-managements">
+                      <li class="collapsed-nav-item-title d-none">Posts</li>
+
+                      <li class="nav-item">
+                          <a class="nav-link {{ Route::currentRouteName() == 'admin.posts.create' ? 'active' : '' }}" 
+                            href="{{ route('admin.posts.create') }}">
+                              <div class="d-flex align-items-center">
+                                  <span class="nav-link-text">Create Post</span>
+                              </div>
+                          </a>
+                      </li>
+
+                      <li class="nav-item">
+                          <a class="nav-link {{ Route::currentRouteName() == 'admin.posts.index' ? 'active' : '' }}" 
+                            href="{{ route('admin.posts.index') }}">
+                              <div class="d-flex align-items-center">
+                                  <span class="nav-link-text">Posts List</span>
+                              </div>
+                          </a>
+                      </li>
+
+                  </ul>
+              </div>
+          </div>
+        @endif
+
           @php
               $pageRoutes = ['admin.models.create', 'admin.models.index'];
           @endphp
