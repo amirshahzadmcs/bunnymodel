@@ -13,7 +13,9 @@ class PostController extends Controller
     {
         $perPage = $request->input('per_page', 10);
 
-        $posts = PostModel::published()->paginate($perPage);
+        $posts = PostModel::published()
+                            ->latest()
+                            ->paginate($perPage);
 
         return response()->json([
             'status' => 'success',
