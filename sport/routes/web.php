@@ -62,7 +62,7 @@ Route::middleware(['auth:admin', 'admin.permission:Manage Users'])->group(functi
 // Pages
 Route::middleware(['auth:admin', 'admin.permission:Manage pages'])->group(function () {
     Route::prefix('admin/pages')->group(function () {
-        Route::get('/', [PageControllerPageController::class, 'index'])->name('admin.pages.index');
+        Route::get('/', [PageController::class, 'index'])->name('admin.pages.index');
         Route::get('/create', [PageController::class, 'create'])->name('admin.pages.create');
         Route::post('/', [PageController::class, 'store'])->name('admin.pages.store');
         Route::get('/{page}/update', [PageController::class, 'update'])->name('admin.pages.update');
